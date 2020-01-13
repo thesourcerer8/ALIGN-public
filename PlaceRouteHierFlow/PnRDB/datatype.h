@@ -41,6 +41,9 @@ struct Via;
 struct PowerGrid;
 struct PowerNet;
 struct PortPos;
+struct Router_report;
+struct routing_net;
+
 
 /// Part 1: declaration of enum types
 enum NType {Block, Terminal};
@@ -356,11 +359,12 @@ struct hierNode {
   vector<Abument> Abument_blocks;
   vector<MatchBlock> Match_blocks;
   vector<CCCap> CC_Caps;
-  vector<PortPos> Port_Location;
   vector<R_const> R_Constraints;
   vector<C_const> C_Constraints;
+  vector<PortPos> Port_Location;
   int bias_Hgraph=92;
   int bias_Vgraph=92;
+  vector<Router_report> router_report;
 
 
 }; // structure of vertex in heirarchical tree
@@ -476,9 +480,17 @@ struct designRule {
 /// PArt 6: uniform DRC rule
 struct ViaModel {
   string name;
-  int ViaIdx, LowerIdx, UpperIdx;
-  std::vector<point> ViaRect, LowerRect, UpperRect;
+  int ViaIdx, LowerIdx, UpperIdx; //lower metal idx and upper metal idx
+  std::vector<point> ViaRect, LowerRect, UpperRect; //LL and UR of Via, center is (0,0), LowerRect and UpperRect are Rects considering enclosure
   double R;
+};
+
+struct GdsDatatype
+{
+  int Draw = 0;
+  int Pin = 0;
+  int Label = 0;
+  int Blockage = 0;
 };
 
 struct metal_info {
@@ -494,6 +506,8 @@ struct metal_info {
   int dist_ee;
   double unit_R;
   double unit_C;
+  double unit_CC;
+  GdsDatatype gds_datatype;
 };
 
 struct via_info {
@@ -510,18 +524,35 @@ struct via_info {
   int dist_ss; //via spacing, X direction spacing
   int dist_ss_y; // Y direction spacing
   double R;
+  GdsDatatype gds_datatype;
 };
 
 struct Drc_info {
   int MaxLayer; //index
-  map<string, int> Metalmap, Viamap;
-  vector<metal_info> Metal_info;
-  vector<via_info> Via_info;
-  vector<int> metal_weight;
+  map<string, int> Metalmap, Viamap; // map from metal/via's name(M1, M2, V1...) to metal/via's index in the below vectors
+  vector<metal_info> Metal_info; //metal info read from layers.json
+  vector<via_info> Via_info; //via info read from layers.json
+  vector<int> metal_weight; // initially all set to 1 in ReadDesignRuleJson.cpp
   vector<ViaModel> Via_model;
-  vector<string> MaskID_Metal;
+  vector<string> MaskID_Metal; //str type LayerNo of each Layer
   vector<string> MaskID_Via;
 };
+
+struct routing_net{
+   
+  string net_name;
+  vector<string> pin_name;
+  vector<int> pin_access; 
+   
+};
+
+struct Router_report{
+
+  string node_name;
+  vector<routing_net> routed_net;
+  
+};
+
 
 }
 

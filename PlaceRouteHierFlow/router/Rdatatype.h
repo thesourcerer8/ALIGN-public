@@ -14,6 +14,7 @@
 //using std::map;
 
 namespace RouterDB {
+struct box;
 struct point;
 struct vertex;
 struct ViaModel;
@@ -72,7 +73,8 @@ struct tile{
   int width;
   int height;
   std::vector<int> metal;
-  int tileLayer=-1;
+  std::vector<int> origin_metal;
+  int tileLayer = -1;
   int index=-1;
   int Yidx=-1;
   int Xidx=-1;
@@ -86,7 +88,9 @@ struct vertex{
   int metal=-1;
   int Cost = -1;
   bool active=false;
-  int parent = -1; // -1 mean source	
+  bool via_active_down = true;
+  bool via_active_up = true;
+  int parent = -1; // -1 mean source
   int index=-1;
   std::vector<int> gridmetal;
   bool expand=0; // expand to right (east) for vertical node? expand to up (north) for heriental node?
@@ -116,6 +120,13 @@ struct Via{
   //int ViaLowerYLoc;
   //int ViaUpperYLoc;
 };
+
+/* currently unused
+struct via_point{
+  int vIdx;
+  point position;
+};
+*/
 
 struct Metal{
   int MetalIdx;
@@ -230,6 +241,7 @@ struct Net{
   std::vector<connectNode> connected; // list of connected components
   std::string priority=""; // critical net constraint			
   std::vector<Metal> path_metal;
+  std::vector<int> extend_label;
   std::vector<Via> path_via;
   std::vector<SteinerTree> STs;
   std::vector<std::pair<int,int> > global_path; //index of tiles, representing start point & end point of tiles
@@ -237,7 +249,7 @@ struct Net{
   std::vector<std::vector<int> > connectedTile;
   std::vector<R_const> R_constraints;
   std::vector<C_const> C_constraints;
-  int STindex = -1;
+  int STindex = 0;
   //void display();
 };
 
@@ -371,6 +383,22 @@ struct pointYXComp {
   }
 };
 
+struct pointSetComp{
+  bool operator() (const std::pair<int, RouterDB::point>& lhs, const std::pair<int, RouterDB::point>& rhs) const{
+    if(lhs.first==rhs.first){
+      if(lhs.second.x==rhs.second.x) {
+        return lhs.second.y < rhs.second.y;
+      }
+      else
+      {
+        return lhs.second.x < rhs.second.x;
+      }
+    }else{
+      return lhs.first < rhs.first;
+    }
+  }
+};
+
 struct tileComp {
   bool operator() (const tile& lhs, const tile& rhs) const
   {
@@ -499,5 +527,8 @@ struct SegOrderComp {
   }
 };
 
-}
+struct box{
+  point LL, UR;
+};
+} // namespace RouterDB
 #endif

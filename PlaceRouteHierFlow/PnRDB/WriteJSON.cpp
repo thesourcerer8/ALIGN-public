@@ -175,7 +175,7 @@ JSONLabelTerminals(PnRDB::hierNode& node, const PnRDB::Drc_info& drc_info, json&
 		    if (write == 0) {
 		      center_x[0] = unit * con.placedCenter.x;
 		      center_y[0] = unit * con.placedCenter.y;
-
+                      std::cout<<"Terminal name "<<node.Terminals[i].name<<" center "<<center_x[0]<<" "<<center_y[0]<<std::endl;
 		      json elm;
 		      elm["type"] = "text";
 		      elm["layer"] = metal2int( drc_info, con.metal);
@@ -214,14 +214,16 @@ assignBoxPoints (int* x, int*y, struct PnRDB::bbox b, double unit) {
 }
 
 void
-addTextElements (json& jsonElements, int cenX, int cenY, int layer, const string& text) {
+addTextElements (json& jsonElements, int cenX, int cenY, int layer, const PnRDB::Drc_info& drc_info, int layer_index, const string& text) {
     int test_font=1,test_vp=1,test_hp=1;
-    const int test_texttype=251; //draw 0, label 2, pin 251, blockage 4
+    //const int test_texttype=3; //draw 0, label 2, pin 3, blockage 4
     double test_mag=0.03; 
     json element;
     element["type"] = "text";
     element["layer"] = layer;
-    element["texttype"] = test_texttype;
+    element["texttype"] = drc_info.Metal_info.at(layer_index).gds_datatype.Pin;
+    //std::cout << "add Text Elements Test" << layer_index << layer << element["texttype"] << std::endl;
+    //reminder, layer_index is not metal layer number. It is the index of metal in drc_info.Metal_info
     element["presentation"] = JSON_Presentation (test_font, test_vp, test_hp);
 
     element["strans"] = 0;
@@ -257,7 +259,7 @@ addMetalBoundaries (json& jsonElements, struct PnRDB::Metal& metal, const PnRDB:
     return false;
 }
 
-/*
+
 static void
 addContactBoundaries (json& jsonElements, struct PnRDB::contact& Contact, const PnRDB::Drc_info& drc_info, int unit) {
 
@@ -275,7 +277,7 @@ addContactBoundaries (json& jsonElements, struct PnRDB::contact& Contact, const 
     bound0["xy"] = xy; 
     jsonElements.push_back (bound0);
 }
-*/
+
 
 void
 addOABoundaries (json& jsonElements, int width, int height) {
@@ -369,9 +371,7 @@ PnRdatabase::WriteJSON (PnRDB::hierNode& node, bool includeBlock, bool includeNe
 	}   
     std::cout<<"unitScale "<<unitScale<<std::endl;
     uniGDSset.clear();
-
-    //unitScale=unitScale/2;
-    
+  
     std::ofstream jsonStream;
     jsonStream.open (node.gdsFile + ".json");
     json jsonTop;
@@ -418,16 +418,22 @@ PnRdatabase::WriteJSON (PnRDB::hierNode& node, bool includeBlock, bool includeNe
 
     int x[5], y[5];
     int write_blockPins_name = 1;
-    if (write_blockPins_name){
+    if (write_blockPins_name and node.isTop ==1){
 	for (unsigned int i = 0; i < node.blockPins.size(); i++) {
 	    int write = 0;
+            std::cout<<"Write blockPins info "<<node.blockPins[i].name<<std::endl;
+            std::cout<<"blockPins contact size "<<node.blockPins[i].pinContacts.size()<<std::endl;
 	    for (unsigned int j = 0; j < node.blockPins[i].pinContacts.size(); j++) {
-		PnRDB::contact con = node.blockPins[i].pinContacts[j];
-		assignBoxPoints (x, y, con.placedBox, unitScale);
 		if (write == 0) {
+		    PnRDB::contact con = node.blockPins[i].pinContacts[j];
+                    std::cout<<"contact info "<<con.originBox.LL.x<<" "<<con.originBox.LL.y<<" "<<con.originBox.UR.x<<" "<<con.originBox.UR.y<<std::endl;
+                    con.placedBox = con.originBox;
+                    addContactBoundaries (jsonElements, con, drc_info, unitScale);
+		    assignBoxPoints (x, y, con.originBox, unitScale);
 		    addTextElements (jsonElements, (x[0]+x[2])/2, (y[0]+y[2])/2,
-				     metal2int( drc_info, con.metal),
-				     node.blockPins[i].name);
+				     metal2int( drc_info, con.metal), 
+                    drc_info, drc_info.Metalmap.at(con.metal),
+                    node.blockPins[i].name);
 		    write = 1;	// added by yg 
 		}
 	    }
@@ -446,6 +452,7 @@ PnRdatabase::WriteJSON (PnRDB::hierNode& node, bool includeBlock, bool includeNe
 			assignBoxPoints (x, y, metal.MetalRect.placedBox, unitScale);
 			addTextElements (jsonElements, (x[0]+x[2])/2, (y[0]+y[2])/2,
 					 metal2int( drc_info, metal.MetalRect.metal),
+                     drc_info, drc_info.Metalmap.at(metal.MetalRect.metal),
 					 node.Nets[i].name);
 			write = 1; // added by yg 
 		    }
@@ -457,9 +464,9 @@ PnRdatabase::WriteJSON (PnRDB::hierNode& node, bool includeBlock, bool includeNe
 	}
     }
     json j;
-    JSONLabelTerminals(node, drc_info, j, unitScale);
+    //JSONLabelTerminals(node, drc_info, j, unitScale);
     for (json::iterator elm = j.begin(); elm != j.end(); ++elm) jsonElements.push_back (*elm);
-    includePowerNet = false;
+
     if (includePowerNet) {
 	for (unsigned int i = 0; i < node.PowerNets.size(); i++) {
 	    //path_metal
@@ -471,6 +478,7 @@ PnRdatabase::WriteJSON (PnRDB::hierNode& node, bool includeBlock, bool includeNe
 			assignBoxPoints (x, y, metal.MetalRect.placedBox, unitScale);
 			addTextElements (jsonElements, (x[0]+x[2])/2, (y[0]+y[2])/2,
 					 metal2int( drc_info, metal.MetalRect.metal),
+                     drc_info, drc_info.Metalmap.at(metal.MetalRect.metal),
 					 node.PowerNets[i].name);
 			write = 1; //added by yg 
 		    }
@@ -481,7 +489,7 @@ PnRdatabase::WriteJSON (PnRDB::hierNode& node, bool includeBlock, bool includeNe
 		addViaBoundaries(jsonElements, node.PowerNets[i].path_via[j], drc_info, unitScale);
 	}
     }
-    includePowerGrid = false;
+
     if (includePowerGrid) {
 	const int vdd = 1; const int gnd = 1;
 	if (vdd == 1) {
@@ -651,6 +659,7 @@ PnRdatabase::WriteJSON_Routability_Analysis (PnRDB::hierNode& node, const string
     json jsonTop;
     jsonTop["Cell Name"] = node.name;
     jsonTop["Units"] = "0.5nm";
+    jsonTop["Istop"] =node.isTop;
     int unit = 1;
 
     json temp_box;

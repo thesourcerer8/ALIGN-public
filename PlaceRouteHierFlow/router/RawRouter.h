@@ -17,6 +17,7 @@ class RawRouter {
     std::vector<RouterDB::Block> Blocks;
     std::vector<RouterDB::terminal> Terminals;
     std::vector<RouterDB::PowerNet> PowerNets;
+    bool terminal_routing;
     RouterDB::PowerGrid Vdd_grid;
     RouterDB::PowerGrid Gnd_grid;
     RouterDB::point LL; //LL for entire node
@@ -27,7 +28,7 @@ class RawRouter {
     //std::vector<RouterDB::SinkData> Dest; //what is the correct defination of     Source and Dest?
     int path_number; //number candidate path
     PnRDB::Drc_info drc_info;
-    int lowest_metal, highest_metal; //index of lowest metal & highest me    tal
+    int lowest_metal, highest_metal; //index of lowest metal & highest metal
     int grid_scale; //dynamic grid_scal
     bool isTop;
     int width, height;
@@ -42,6 +43,7 @@ class RawRouter {
     void InsertPlistToSet_x(std::set<RouterDB::SinkData, RouterDB::SinkDataComp>& Set_x, std::vector<std::vector<RouterDB::point> >& plist);
     std::vector<std::vector<RouterDB::point> > FindPlist(std::set<RouterDB::SinkData, RouterDB::SinkDataComp>& Set_x, RouterDB::point LL, RouterDB::point UR);
     std::vector<std::set<RouterDB::point, RouterDB::pointXYComp> > FindsetPlist(std::set<RouterDB::SinkData, RouterDB::SinkDataComp>& Set_x, RouterDB::point LL, RouterDB::point UR);
-
+    std::vector<std::set<RouterDB::point, RouterDB::pointXYComp> > Plist2Set(std::vector<std::vector<RouterDB::point> >& plist);
+    void InsertPlistToSet(std::vector<std::set<RouterDB::point, RouterDB::pointXYComp>> &Set, std::vector<std::vector<RouterDB::point>> &plist);
 };
 #endif

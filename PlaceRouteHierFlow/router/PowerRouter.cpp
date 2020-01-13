@@ -14,13 +14,13 @@
 
 //detail router for the rest
 
-PowerRouter::PowerRouter(PnRDB::hierNode& node, PnRDB::Drc_info& drc_info, int Lmetal, int Hmetal, int power_grid){
+PowerRouter::PowerRouter(PnRDB::hierNode& node, PnRDB::Drc_info& drc_info, int Lmetal, int Hmetal, int power_grid, double rate){
   
   //power_grid 1 create power_grid, 0 power net routing
 
   if(power_grid == 1){
      std::cout<<"CheckPoint 1"<<std::endl;
-     CreatePowerGrid(node, drc_info, Lmetal, Hmetal);
+     CreatePowerGrid(node, drc_info, Lmetal, Hmetal, rate);
      std::cout<<"CheckPoint 2"<<std::endl;
      Physical_metal_via_power_grid(Vdd_grid);
      std::cout<<"CheckPoint 3"<<std::endl;
@@ -30,7 +30,7 @@ PowerRouter::PowerRouter(PnRDB::hierNode& node, PnRDB::Drc_info& drc_info, int L
      std::cout<<"CheckPoint 5"<<std::endl;  
     }else{
      std::cout<<"CheckPoint 6"<<std::endl;
-     PowerNetRouter(node, drc_info, Lmetal, Hmetal);
+     PowerNetRouter(node, drc_info, Lmetal, Hmetal, rate);
      std::cout<<"CheckPoint 7"<<std::endl;
      Physical_metal_via(); 
      std::cout<<"CheckPoint 8"<<std::endl;
@@ -43,9 +43,9 @@ PowerRouter::PowerRouter(PnRDB::hierNode& node, PnRDB::Drc_info& drc_info, int L
 //write PowerGrid in top level
 //write PowerNet in each level or top level???
 
-void PowerRouter::PowerNetRouter(PnRDB::hierNode& node, PnRDB::Drc_info& drc_info, int Lmetal, int Hmetal){
+void PowerRouter::PowerNetRouter(PnRDB::hierNode& node, PnRDB::Drc_info& drc_info, int Lmetal, int Hmetal, double rate){
 
-  GetData(node, drc_info, Lmetal, Hmetal);
+  GetData(node, drc_info, Lmetal, Hmetal, rate);
   
   std::vector<std::vector<RouterDB::point> > plist;
   plist.resize( this->layerNo );
@@ -98,7 +98,7 @@ void PowerRouter::PowerNetRouter(PnRDB::hierNode& node, PnRDB::Drc_info& drc_inf
             Graph graph(grid);
             bool pathMark= graph.FindFeasiblePath(grid, this->path_number);
             std::vector<std::vector<RouterDB::Metal> > physical_path;
-
+            std::cout<<"power routing pathMark "<<pathMark<<std::endl;
             if(pathMark) {
                  physical_path=graph.ConvertPathintoPhysical(grid);
                  lastmile_source_new(physical_path,temp_source);
@@ -116,10 +116,12 @@ void PowerRouter::PowerNetRouter(PnRDB::hierNode& node, PnRDB::Drc_info& drc_inf
 
 };
 
-void PowerRouter::CreatePowerGrid(PnRDB::hierNode& node, PnRDB::Drc_info& drc_info, int Lmetal, int Hmetal){
+void PowerRouter::CreatePowerGrid(PnRDB::hierNode& node, PnRDB::Drc_info& drc_info, int Lmetal, int Hmetal, double rate){
 
   std::cout<<"checkpoint1.1"<<std::endl;
-  GetData(node, drc_info, Lmetal, Hmetal);
+  GetData(node, drc_info, Lmetal, Hmetal, rate);
+  CreatePowerGridDrc_info();
+  this->drc_info=this->PowerGrid_Drc_info;
   std::cout<<"checkpoint1.2"<<std::endl;
   std::vector<std::vector<RouterDB::point> > plist;
   plist.resize( this->layerNo );
@@ -141,15 +143,26 @@ void PowerRouter::CreatePowerGrid(PnRDB::hierNode& node, PnRDB::Drc_info& drc_in
   std::set<RouterDB::SinkData, RouterDB::SinkDataComp> Set_x;
   InsertPlistToSet_x(Set_x, plist);
   std::cout<<"checkpoint1.2.8"<<std::endl;
-  CreatePowerGridDrc_info();
+  
   //how to crate PowerGrid here????
   Grid grid(this->PowerGrid_Drc_info, this->LL, this->UR, lowest_metal, highest_metal, this->grid_scale);//1.pg needs other LL, UR 2. here what is the lowest_metal, highest_metal
 
   std::vector<std::set<RouterDB::point, RouterDB::pointXYComp> > netplist = FindsetPlist(Set_x, LL, UR);
-  grid.InactivePointlist(netplist);
+  for(int i=0;i<netplist.size();i++){
+     std::cout<<"Power inactive node "<<netplist[i].size()<<std::endl;
+     if(i==5){
+       for(auto it=netplist[i].begin();it!=netplist[i].end();it++){
+         std::cout<<"point "<<it->x<<" "<<it->y<<std::endl;
+       }
+     }
+  }
+
+  grid.InactivePointlist_Power(netplist);
   //std::vector<std::vector<RouterDB::point> > new_plist = FindPlist(Set_x, this->LL, this->UR);
   //grid.InactivePointlist(new_plist);
   grid.PrepareGraphVertices(LL.x, LL.y, UR.x, UR.y);
+
+  std::cout<<"Power Grid Info "<<grid.vertices_total.size()<<" "<<grid.vertices_graph.size()<<std::endl;
   //here return a power grid metal information
   bool power_grid = 1;
   std::cout<<"checkpoint1.3"<<std::endl;
@@ -332,14 +345,14 @@ void PowerRouter::Physical_metal_via_power_grid(RouterDB::PowerGrid &temp_grid){
               }
             }else{
               if(temp_grid.metals[i].LinePoint[0].y<temp_grid.metals[i].LinePoint[1].y){               
-              temp_grid.metals[i].MetalRect.placedLL.x =  temp_grid.metals[i].LinePoint[0].x-temp_grid.metals[i].width/2;;
+              temp_grid.metals[i].MetalRect.placedLL.x =  temp_grid.metals[i].LinePoint[0].x-temp_grid.metals[i].width/2;
               temp_grid.metals[i].MetalRect.placedLL.y =  temp_grid.metals[i].LinePoint[0].y-temp_grid.metals[i].width/2;
-              temp_grid.metals[i].MetalRect.placedUR.x =  temp_grid.metals[i].LinePoint[1].x+temp_grid.metals[i].width/2;;
+              temp_grid.metals[i].MetalRect.placedUR.x =  temp_grid.metals[i].LinePoint[1].x+temp_grid.metals[i].width/2;
               temp_grid.metals[i].MetalRect.placedUR.y =  temp_grid.metals[i].LinePoint[1].y+temp_grid.metals[i].width/2;  
                 }else{
-              temp_grid.metals[i].MetalRect.placedLL.x =  temp_grid.metals[i].LinePoint[1].x-temp_grid.metals[i].width/2;;
+              temp_grid.metals[i].MetalRect.placedLL.x =  temp_grid.metals[i].LinePoint[1].x-temp_grid.metals[i].width/2;
               temp_grid.metals[i].MetalRect.placedLL.y =  temp_grid.metals[i].LinePoint[1].y-temp_grid.metals[i].width/2;
-              temp_grid.metals[i].MetalRect.placedUR.x =  temp_grid.metals[i].LinePoint[0].x+temp_grid.metals[i].width/2;;
+              temp_grid.metals[i].MetalRect.placedUR.x =  temp_grid.metals[i].LinePoint[0].x+temp_grid.metals[i].width/2;
               temp_grid.metals[i].MetalRect.placedUR.y =  temp_grid.metals[i].LinePoint[0].y+temp_grid.metals[i].width/2;
                 }
             }
@@ -494,7 +507,7 @@ void PowerRouter::CreatePowerGridDrc_info(){
 
 };
 
-void PowerRouter::GetData(PnRDB::hierNode& node, PnRDB::Drc_info& drc_info, int Lmetal, int Hmetal){
+void PowerRouter::GetData(PnRDB::hierNode& node, PnRDB::Drc_info& drc_info, int Lmetal, int Hmetal, double rate){
   std::cout<<"Checkpoint get Data 1"<<std::endl;
   getDRCdata(drc_info);
   std::cout<<"Checkpoint get Data 2"<<std::endl;
@@ -510,7 +523,7 @@ void PowerRouter::GetData(PnRDB::hierNode& node, PnRDB::Drc_info& drc_info, int 
   std::cout<<"Checkpoint get Data 7"<<std::endl;
 
   for(unsigned int i=0;i<drc_info.Metal_info.size();i++){
-      utilization.push_back(0.1); 
+      utilization.push_back(rate); 
      }
   std::cout<<"Checkpoint get Data 8"<<std::endl;
 };

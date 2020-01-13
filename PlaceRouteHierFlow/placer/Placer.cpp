@@ -43,7 +43,7 @@ bool Placer::GenerateValidSolution(design& mydesign, SeqPair& curr_sp, ConstGrap
       //ConstGraph infea_sol(mydesign, curr_sp, mode);
       //infea_sol.AddLargePenalty(); // ensure this infeasible soluton has huge cost
       //curr_sol=infea_sol;
-      return false;
+      return false; 
     }
     //curr_sp.PrintSeqPair();
     // 2. Generate constraint graphs
@@ -524,7 +524,6 @@ void Placer::PlacementRegularAspectRatio(std::vector<PnRDB::hierNode>& nodeVec, 
   curr_sp.PrintSeqPair();
   ConstGraph curr_sol;
   std::map<double, SeqPair> spVec=PlacementCoreAspectRatio(designData, curr_sp, curr_sol, mode, nodeSize, effort);
-  //std::map<double, SeqPair> spVec=PerformanceDriven_PlacementCoreAspectRatio(designData, curr_sp, curr_sol, mode, nodeSize, effort);
   curr_sol.updateTerminalCenter(designData, curr_sp);
   //curr_sol.PlotPlacement(designData, curr_sp, opath+nodeVec.back().name+"opt.plt");
   if((int)spVec.size()<nodeSize) {
