@@ -130,7 +130,7 @@ static void route_single_variant( PnRdatabase& DB, const PnRDB::Drc_info& drcInf
         
   }
 
-  DB.WriteJSON (current_node, true, true, true, true, current_node.name+"_"+std::to_string(lidx), drcInfo, opath);
+  DB.WriteJSON (current_node, true, true, false, false, current_node.name+"_"+std::to_string(lidx), drcInfo, opath);
   std::cout<<"Check point : before checkin\n";
   DB.PrintHierNode(current_node);
       
