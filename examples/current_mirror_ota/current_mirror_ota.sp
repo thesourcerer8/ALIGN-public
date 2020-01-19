@@ -9,4 +9,4 @@ m21 net16 net16 vdd vdd pmos_rvt w=27e-9 l=20e-9 nfin=60
 m20 vbiasnd net16 vdd vdd pmos_rvt w=27e-9 l=20e-9 nfin=240
 m19 net27 net27 vdd vdd pmos_rvt w=27e-9 l=20e-9 nfin=60
 m18 vout net27 vdd vdd pmos_rvt w=27e-9 l=20e-9 nfin=240
-..END
+.ends current_mirror_ota
