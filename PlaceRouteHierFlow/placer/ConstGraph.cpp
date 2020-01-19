@@ -2591,13 +2591,15 @@ double ConstGraph::PerformanceDriven_CalculateCost(design& caseNL, SeqPair& case
 
   std::string model_input_node_name = "feature";
   std::string model_output_node_name = "lable/BiasAdd";
+  std::string path = "/home/yaguang/Desktop/src/ALIGN-public/PlaceRouteHierFlow/Performance_Prediction/";
+  std::string circuit = "five_transistor_ota";
 
-  std::string gain_model_path = "/home/yaguang/Desktop/src/ALIGN-public/PlaceRouteHierFlow/Performance_Prediction/models/GCN_rcAC_gain.pb";
-  std::string ugf_model_path = "/home/yaguang/Desktop/src/ALIGN-public/PlaceRouteHierFlow/Performance_Prediction/models/GCN_rcAC_ugf.pb";
-  std::string pm_model_path = "/home/yaguang/Desktop/src/ALIGN-public/PlaceRouteHierFlow/Performance_Prediction/models/GCN_rcAC_pm.pb";
-  std::string threedb_model_path = "/home/yaguang/Desktop/src/ALIGN-public/PlaceRouteHierFlow/Performance_Prediction/models/GCN_rcAC_threedb.pb";
-  std::string feature_name_path = "/home/yaguang/Desktop/src/ALIGN-public/PlaceRouteHierFlow/Performance_Prediction/models/Feature_name";
-  std::string device_feature_path = "/home/yaguang/Desktop/src/ALIGN-public/PlaceRouteHierFlow/Performance_Prediction/models/Device_feature";
+  std::string gain_model_path = path+circuit+"/GCN_rcAC_gain.pb";
+  std::string ugf_model_path = path+circuit+"/GCN_rcAC_ugf.pb"; 
+  std::string pm_model_path = path+circuit+"/GCN_rcAC_pm.pb"; 
+  std::string threedb_model_path = path+circuit+"/GCN_rcAC_threedb.pb";  
+  std::string feature_name_path = path+circuit+"/Feature_name"; 
+  std::string device_feature_path = path+circuit+"/Device_feature";
   
   Deep_learning_model_readin_feature_name(feature_A,feature_D,dp_feature_name,feature_name_path);
   Deep_learning_transform_feature(feature_value,feature_name,dp_feature_name);
