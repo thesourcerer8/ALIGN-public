@@ -2592,14 +2592,27 @@ double ConstGraph::PerformanceDriven_CalculateCost(design& caseNL, SeqPair& case
   std::string model_input_node_name = "feature";
   std::string model_output_node_name = "lable/BiasAdd";
   std::string path = "/home/yaguang/Desktop/src/ALIGN-public/PlaceRouteHierFlow/Performance_Prediction/";
-  std::string circuit = "five_transistor_ota";
+  //std::string circuit = "five_transistor_ota";
+  //std::string circuit = "current_mirror_ota";
+  std::string circuit = "cascode_current_mirror_ota";
 
-  std::string gain_model_path = path+circuit+"/GCN_rcAC_gain.pb";
-  std::string ugf_model_path = path+circuit+"/GCN_rcAC_ugf.pb"; 
-  std::string pm_model_path = path+circuit+"/GCN_rcAC_pm.pb"; 
-  std::string threedb_model_path = path+circuit+"/GCN_rcAC_threedb.pb";  
-  std::string feature_name_path = path+circuit+"/Feature_name"; 
-  std::string device_feature_path = path+circuit+"/Device_feature";
+  //std::string model_name = "gcn";
+  std::string model_name = "linear";
+  //std::string model_name = "random";
+  if(model_name=="gcn"){
+    model_output_node_name = "lable/BiasAdd";
+  }else if(model_name=="linear"){
+    model_output_node_name = "lable";
+  }else if(model_name=="random"){
+    model_output_node_name = "probabilities";
+  }
+
+  std::string gain_model_path = path+circuit+"/"+model_name+"/GCN_rcAC_gain.pb";
+  std::string ugf_model_path = path+circuit+"/"+model_name+"/GCN_rcAC_ugf.pb"; 
+  std::string pm_model_path = path+circuit+"/"+model_name+"/GCN_rcAC_pm.pb"; 
+  std::string threedb_model_path = path+circuit+"/"+model_name+"/GCN_rcAC_threedb.pb";  
+  std::string feature_name_path = path+circuit+"/"+model_name+"/Feature_name"; 
+  std::string device_feature_path = path+circuit+"/"+model_name+"/Device_feature";
   
   Deep_learning_model_readin_feature_name(feature_A,feature_D,dp_feature_name,feature_name_path);
   Deep_learning_transform_feature(feature_value,feature_name,dp_feature_name);
@@ -2813,14 +2826,14 @@ double ConstGraph::Deep_learning_model_Prediction(std::vector<double> feature_va
   int feature_size = feature_value.size();//feature_value.size();
   int device_feature_size = device_feature_value.size();//
   std::cout << "feature_size: " << feature_size << std::endl;
-  Tensor X(DT_DOUBLE, TensorShape({ 1, feature_size })); //define a Tensor X, by default is [1, feature_size]
-  Tensor A(DT_DOUBLE, TensorShape({ feature_size, feature_size })); //define a Tensor X, by default is [1, feature_size]
-  Tensor D(DT_DOUBLE, TensorShape({ feature_size, feature_size })); //define a Tensor X, by default is [1, feature_size]
-  Tensor C(DT_DOUBLE, TensorShape({ 1, device_feature_size })); //define a Tensor c, by default is [1, device_feature_size]
-  auto plane_tensor_X = X.tensor<double,2>(); //pointer of X
-  auto plane_tensor_A = A.tensor<double,2>(); //pointer of A
-  auto plane_tensor_D = D.tensor<double,2>(); //pointer of A
-  auto plane_tensor_C = C.tensor<double,2>(); //pointer of X
+  Tensor X(DT_FLOAT, TensorShape({ 1, feature_size })); //define a Tensor X, by default is [1, feature_size]
+  Tensor A(DT_FLOAT, TensorShape({ feature_size, feature_size })); //define a Tensor X, by default is [1, feature_size]
+  Tensor D(DT_FLOAT, TensorShape({ feature_size, feature_size })); //define a Tensor X, by default is [1, feature_size]
+  Tensor C(DT_FLOAT, TensorShape({ 1, device_feature_size })); //define a Tensor c, by default is [1, device_feature_size]
+  auto plane_tensor_X = X.tensor<float,2>(); //pointer of X
+  auto plane_tensor_A = A.tensor<float,2>(); //pointer of A
+  auto plane_tensor_D = D.tensor<float,2>(); //pointer of A
+  auto plane_tensor_C = C.tensor<float,2>(); //pointer of X
   std::cout<<"test flag 1"<<std::endl;
   for (int i = 0; i < feature_size; i++){
       plane_tensor_X(0,i) = feature_value.at(i);//1; //load data into X
@@ -2854,7 +2867,8 @@ double ConstGraph::Deep_learning_model_Prediction(std::vector<double> feature_va
   }
 
   //std::vector<std::pair<std::string,Tensor>> inputs = {{input_node_name,X}}; //input feed_dict
-  std::vector<std::pair<std::string,Tensor>> inputs = {{input_node_name,X},{"A", A}, {"D", D}, {"feature2",C}}; //input feed_dict
+  //std::vector<std::pair<std::string,Tensor>> inputs = {{input_node_name,X},{"A", A}, {"D", D}, {"feature2",C}}; //input feed_dict
+  std::vector<std::pair<std::string,Tensor>> inputs = {{input_node_name,X}}; //input feed_dict
   std::vector<Tensor> outputs; //output tensor
   Status status_run = session->Run(inputs, {output_node_name}, {}, &outputs); //run
   if (!status_run.ok()) {
@@ -2864,8 +2878,8 @@ double ConstGraph::Deep_learning_model_Prediction(std::vector<double> feature_va
   }else{
       cout << "Prection successfully run." << endl;
   }
-  auto out_tensor = outputs[0].tensor<double,2>(); // by default output is [1, 1]
-  double performance = out_tensor(0, 0);
+  auto out_tensor = outputs[0].tensor<float,2>(); // by default output is [1, 1]
+  double performance = (double) out_tensor(0, 0);
 
   return performance;
 
