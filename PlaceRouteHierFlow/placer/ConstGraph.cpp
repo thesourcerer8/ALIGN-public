@@ -2597,8 +2597,8 @@ double ConstGraph::PerformanceDriven_CalculateCost(design& caseNL, SeqPair& case
   std::string circuit = "cascode_current_mirror_ota";
 
   //std::string model_name = "gcn";
-  std::string model_name = "linear";
-  //std::string model_name = "random";
+  //std::string model_name = "linear";
+  std::string model_name = "random";
   if(model_name=="gcn"){
     model_output_node_name = "lable/BiasAdd";
   }else if(model_name=="linear"){
@@ -2634,10 +2634,10 @@ double ConstGraph::PerformanceDriven_CalculateCost(design& caseNL, SeqPair& case
 
   }
 
-  double predicted_gain = Deep_learning_model_Prediction(feature_value, feature_name, gain_model_path, model_input_node_name, model_output_node_name, feature_A, feature_D, device_feature); //maybe gain a model, uf a model
-  double predicted_ugf = Deep_learning_model_Prediction(feature_value, feature_name, ugf_model_path, model_input_node_name, model_output_node_name, feature_A, feature_D, device_feature); //maybe gain a model, uf a model
-  double predicted_pm = Deep_learning_model_Prediction(feature_value, feature_name, pm_model_path, model_input_node_name, model_output_node_name, feature_A, feature_D, device_feature); //maybe gain a model, uf a model
-  double predicted_threedb = Deep_learning_model_Prediction(feature_value, feature_name, threedb_model_path, model_input_node_name, model_output_node_name, feature_A, feature_D, device_feature); //maybe gain a model, uf a model
+  double predicted_gain = Deep_learning_model_Prediction(feature_value, feature_name, gain_model_path, model_input_node_name, model_output_node_name, feature_A, feature_D, device_feature, model_name); //maybe gain a model, uf a model
+  double predicted_ugf = Deep_learning_model_Prediction(feature_value, feature_name, ugf_model_path, model_input_node_name, model_output_node_name, feature_A, feature_D, device_feature, model_name); //maybe gain a model, uf a model
+  double predicted_pm = Deep_learning_model_Prediction(feature_value, feature_name, pm_model_path, model_input_node_name, model_output_node_name, feature_A, feature_D, device_feature, model_name); //maybe gain a model, uf a model
+  double predicted_threedb = Deep_learning_model_Prediction(feature_value, feature_name, threedb_model_path, model_input_node_name, model_output_node_name, feature_A, feature_D, device_feature, model_name); //maybe gain a model, uf a model
 
   std::cout<<"model prediction "<<"gain "<<predicted_gain<<" ugf "<<predicted_ugf<<" pm "<<predicted_pm<<" threedb "<<predicted_threedb<<std::endl;
 
@@ -2793,7 +2793,7 @@ std::vector<double> ConstGraph::Calculate_Center_Point_feature(std::vector<std::
 
 double ConstGraph::Deep_learning_model_Prediction(std::vector<double> feature_value, std::vector<std::string> feature_name, \
                                                   std::string model_path, std::string input_node_name, std::string output_node_name, \
-                                                  std::vector<std::vector<double>> feature_A, std::vector<std::vector<double>> feature_D, std::vector<double> device_feature_value){
+                                                  std::vector<std::vector<double>> feature_A, std::vector<std::vector<double>> feature_D, std::vector<double> device_feature_value, std::string model_name){
   //needs more modifacation
   Session* session;
   Status status = NewSession(SessionOptions(), &session); //create new session
@@ -2868,7 +2868,13 @@ double ConstGraph::Deep_learning_model_Prediction(std::vector<double> feature_va
 
   //std::vector<std::pair<std::string,Tensor>> inputs = {{input_node_name,X}}; //input feed_dict
   //std::vector<std::pair<std::string,Tensor>> inputs = {{input_node_name,X},{"A", A}, {"D", D}, {"feature2",C}}; //input feed_dict
-  std::vector<std::pair<std::string,Tensor>> inputs = {{input_node_name,X}}; //input feed_dict
+  std::vector<std::pair<std::string,Tensor>> inputs;
+  if(model_name=="gcn"){
+    inputs = {{input_node_name,X},{"A", A}, {"D", D}, {"feature2",C}};
+  }else{
+    inputs = {{input_node_name,X}};
+  }
+  //std::vector<std::pair<std::string,Tensor>> inputs = {{input_node_name,X}}; //input feed_dict
   std::vector<Tensor> outputs; //output tensor
   Status status_run = session->Run(inputs, {output_node_name}, {}, &outputs); //run
   if (!status_run.ok()) {
