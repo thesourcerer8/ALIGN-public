@@ -2634,22 +2634,29 @@ double ConstGraph::Other_PerformanceDriven_CalculateCost(design& caseNL, SeqPair
 double ConstGraph::Call_Machine_learning_model(std::string model_path,const char* module_name, const char* func_name, std::vector<double> x_test){
 
   std::cout<<"other machin learning model step 1"<<std::endl;
-  Py_Initialize();
+
+  if(import_python_package){
+     Py_Initialize();
+     import_python_package=0;
+  }
   PyObject* pModule = NULL;
   PyObject* pFunc = NULL;
   //const char* module_name = "multiply";
   //const char* func_name = "multiply_list";
   std::cout<<"other machin learning model step 2"<<std::endl;
-  PyRun_SimpleString("import sys");
+  //this->import 
   PyRun_SimpleString("from sklearn.ensemble import RandomForestRegressor");
   PyRun_SimpleString("import numpy as np");
   PyRun_SimpleString("from sklearn.externals import joblib");
   PyRun_SimpleString("import matplotlib.pyplot as plt");
   PyRun_SimpleString("from sklearn.metrics import mean_squared_error, r2_score");
+  PyRun_SimpleString("import sys");
   PyRun_SimpleString("sys.path.append('./')");
   PyRun_SimpleString("sys.path.append('/home/yaguang/Desktop/src/ALIGN-public/PlaceRouteHierFlow/placer')");
   std::cout<<"other machin learning model step 3"<<std::endl;
   pModule = PyImport_ImportModule(module_name);
+  std::cout<<"pModule "<<pModule<<std::endl;
+  std::cout<<"other machin learning model step 3.5"<<std::endl;
   pFunc = PyObject_GetAttrString(pModule, func_name);
   std::cout<<"other machin learning model step 4"<<std::endl;
 
@@ -2682,7 +2689,9 @@ double ConstGraph::Call_Machine_learning_model(std::string model_path,const char
   Py_DECREF(PyList);
   Py_DECREF(pReturn);
   std::cout<<"other machin learning model step 6.5"<<std::endl;
-  Py_Finalize();
+  if(import_python_package){
+    Py_Finalize();
+  }
   std::cout<<"other machin learning model step 7"<<std::endl;
 
   return nResult;
