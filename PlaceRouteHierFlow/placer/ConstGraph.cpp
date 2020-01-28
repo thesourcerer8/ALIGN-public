@@ -2585,15 +2585,15 @@ double ConstGraph::Other_PerformanceDriven_CalculateCost(design& caseNL, SeqPair
   //std::string circuit = "current_mirror_ota";
   std::string circuit = "cascode_current_mirror_ota";
 
-  std::string model_name = "gcn";
+  //std::string model_name = "gcn";
   //std::string model_name = "linear";
-  //std::string model_name = "random_16";
+  std::string model_name = "random";
 
   
-  std::string gain_model_path = path+circuit+"/"+model_name+"/GCN_rcAC_gain.pb";
-  std::string ugf_model_path = path+circuit+"/"+model_name+"/GCN_rcAC_ugf.pb"; 
-  std::string pm_model_path = path+circuit+"/"+model_name+"/GCN_rcAC_pm.pb"; 
-  std::string threedb_model_path = path+circuit+"/"+model_name+"/GCN_rcAC_threedb.pb";  
+  std::string gain_model_path = path+circuit+"/"+model_name+"/RandomForest_gain.m";
+  std::string ugf_model_path = path+circuit+"/"+model_name+"/RandomForest_ugf.m"; 
+  std::string pm_model_path = path+circuit+"/"+model_name+"/RandomForest_pm.m"; 
+  std::string threedb_model_path = path+circuit+"/"+model_name+"/RandomForest_threedb.m";  
   std::string feature_name_path = path+circuit+"/"+model_name+"/Feature_name"; 
   std::string device_feature_path = path+circuit+"/"+model_name+"/Device_feature";
 
@@ -2602,13 +2602,13 @@ double ConstGraph::Other_PerformanceDriven_CalculateCost(design& caseNL, SeqPair
   Deep_learning_transform_feature(feature_value,feature_name,dp_feature_name);
   Deep_learning_model_readin_device_feature(device_feature,device_feature_path);
 
-  const char* module_name = "";
-  const char* func_name = "";
+  const char* module_name = "RandomForest";
+  const char* func_name = "predict_model";
 
   double predicted_gain = Call_Machine_learning_model(gain_model_path, module_name, func_name, feature_value);
-  double predicted_ugf = Call_Machine_learning_model(gain_model_path, module_name, func_name, feature_value);
-  double predicted_pm = Call_Machine_learning_model(gain_model_path, module_name, func_name, feature_value);
-  double predicted_threedb = Call_Machine_learning_model(gain_model_path, module_name, func_name, feature_value);
+  double predicted_ugf = Call_Machine_learning_model(ugf_model_path, module_name, func_name, feature_value);
+  double predicted_pm = Call_Machine_learning_model(pm_model_path, module_name, func_name, feature_value);
+  double predicted_threedb = Call_Machine_learning_model(threedb_model_path, module_name, func_name, feature_value);
 
  std::cout<<"model prediction "<<"gain "<<predicted_gain<<" ugf "<<predicted_ugf<<" pm "<<predicted_pm<<" threedb "<<predicted_threedb<<std::endl;
 
@@ -2633,12 +2633,13 @@ double ConstGraph::Other_PerformanceDriven_CalculateCost(design& caseNL, SeqPair
 
 double ConstGraph::Call_Machine_learning_model(std::string model_path,const char* module_name, const char* func_name, std::vector<double> x_test){
 
+  std::cout<<"other machin learning model step 1"<<std::endl;
   Py_Initialize();
   PyObject* pModule = NULL;
   PyObject* pFunc = NULL;
   //const char* module_name = "multiply";
   //const char* func_name = "multiply_list";
-
+  std::cout<<"other machin learning model step 2"<<std::endl;
   PyRun_SimpleString("import sys");
   PyRun_SimpleString("from sklearn.ensemble import RandomForestRegressor");
   PyRun_SimpleString("import numpy as np");
@@ -2646,10 +2647,11 @@ double ConstGraph::Call_Machine_learning_model(std::string model_path,const char
   PyRun_SimpleString("import matplotlib.pyplot as plt");
   PyRun_SimpleString("from sklearn.metrics import mean_squared_error, r2_score");
   PyRun_SimpleString("sys.path.append('./')");
-  
+  PyRun_SimpleString("sys.path.append('/home/yaguang/Desktop/src/ALIGN-public/PlaceRouteHierFlow/placer')");
+  std::cout<<"other machin learning model step 3"<<std::endl;
   pModule = PyImport_ImportModule(module_name);
   pFunc = PyObject_GetAttrString(pModule, func_name);
-
+  std::cout<<"other machin learning model step 4"<<std::endl;
 
   int L_size = x_test.size();
 
@@ -2658,23 +2660,31 @@ double ConstGraph::Call_Machine_learning_model(std::string model_path,const char
 
   for(int i=0;i<PyList_Size(PyList);i++){
      PyList_SetItem(PyList, i, PyFloat_FromDouble(x_test[i]));
+     std::cout<<"feature value "<<i<<" "<<x_test[i]<<std::endl;
   }
 
   PyTuple_SetItem(ArgList, 1, PyList);
-  PyTuple_SetItem(ArgList, 0, Py_BuildValue("s", model_path));// model_path should be string or const char*
+  PyTuple_SetItem(ArgList, 0, Py_BuildValue("s", model_path.c_str()));// model_path should be string or const char*
+  std::cout<<"model_path "<<model_path<<std::endl;
 
-  
+  std::cout<<"other machin learning model step 5"<<std::endl;
+  PyEval_CallObject(pFunc, ArgList);
+  std::cout<<"other machin learning model step 5.5"<<std::endl;
   PyObject* pReturn = PyEval_CallObject(pFunc, ArgList);
   double nResult;
   PyArg_Parse(pReturn, "d", &nResult); 
+  double Result = nResult;
+  std::cout<<"Random Forest Result "<<Result<<std::endl;
+  std::cout<<"other machin learning model step 6"<<std::endl;
   Py_DECREF(pModule);
   Py_DECREF(pFunc);
   Py_DECREF(ArgList);
   Py_DECREF(PyList);
   Py_DECREF(pReturn);
+  std::cout<<"other machin learning model step 6.5"<<std::endl;
   Py_Finalize();
-  double Result = nResult;
-  std::cout<<"Random Forest Result "<<Result<<std::endl;
+  std::cout<<"other machin learning model step 7"<<std::endl;
+
   return nResult;
 
 }
