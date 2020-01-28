@@ -2571,6 +2571,113 @@ void ConstGraph::Deep_learning_model_readin_device_feature(std::vector<double> &
   
 }
 
+double ConstGraph::Other_PerformanceDriven_CalculateCost(design& caseNL, SeqPair& caseSP){
+
+  std::vector<double> feature_value;
+  std::vector<std::vector<double>> feature_A;
+  std::vector<std::vector<double>> feature_D;
+  std::vector<double> device_feature;
+  std::vector<std::string> feature_name;
+  std::vector<std::string> dp_feature_name;
+
+  std::string path = "/home/yaguang/Desktop/src/ALIGN-public/PlaceRouteHierFlow/Performance_Prediction/";
+  //std::string circuit = "five_transistor_ota";
+  //std::string circuit = "current_mirror_ota";
+  std::string circuit = "cascode_current_mirror_ota";
+
+  std::string model_name = "gcn";
+  //std::string model_name = "linear";
+  //std::string model_name = "random_16";
+
+  
+  std::string gain_model_path = path+circuit+"/"+model_name+"/GCN_rcAC_gain.pb";
+  std::string ugf_model_path = path+circuit+"/"+model_name+"/GCN_rcAC_ugf.pb"; 
+  std::string pm_model_path = path+circuit+"/"+model_name+"/GCN_rcAC_pm.pb"; 
+  std::string threedb_model_path = path+circuit+"/"+model_name+"/GCN_rcAC_threedb.pb";  
+  std::string feature_name_path = path+circuit+"/"+model_name+"/Feature_name"; 
+  std::string device_feature_path = path+circuit+"/"+model_name+"/Device_feature";
+
+  ExtractFeatures(caseNL, caseSP, feature_value, feature_name);
+  Deep_learning_model_readin_feature_name(feature_A,feature_D,dp_feature_name,feature_name_path);
+  Deep_learning_transform_feature(feature_value,feature_name,dp_feature_name);
+  Deep_learning_model_readin_device_feature(device_feature,device_feature_path);
+
+  const char* module_name = "";
+  const char* func_name = "";
+
+  double predicted_gain = Call_Machine_learning_model(gain_model_path, module_name, func_name, feature_value);
+  double predicted_ugf = Call_Machine_learning_model(gain_model_path, module_name, func_name, feature_value);
+  double predicted_pm = Call_Machine_learning_model(gain_model_path, module_name, func_name, feature_value);
+  double predicted_threedb = Call_Machine_learning_model(gain_model_path, module_name, func_name, feature_value);
+
+ std::cout<<"model prediction "<<"gain "<<predicted_gain<<" ugf "<<predicted_ugf<<" pm "<<predicted_pm<<" threedb "<<predicted_threedb<<std::endl;
+
+  //step 3. weighted sum up the performances (gain, uf, PM) and return as cost //needs modifacation
+  double gain_weight = 1.0;
+  double ugf_weight = 1.0;
+  double pm_weight = 1.0;
+  double threedb_weight = 10.0;
+  double expected_gain = 26;
+  double expected_ugf = 1180000000;
+  double expected_pm = 91;
+  double expected_threedb = 50000000;
+
+  double cost = gain_weight*abs(expected_gain-predicted_gain)/expected_gain + ugf_weight*abs(expected_ugf-predicted_ugf)/expected_ugf + pm_weight*abs(expected_pm-predicted_pm)/expected_pm + threedb_weight*abs(expected_threedb-predicted_threedb)/expected_threedb;
+  //cost = cost + predicted_gain*gain_weight;
+
+  std::cout<<"deep learning cost "<<cost<<std::endl;
+  return cost;  
+
+
+}
+
+double ConstGraph::Call_Machine_learning_model(std::string model_path,const char* module_name, const char* func_name, std::vector<double> x_test){
+
+  Py_Initialize();
+  PyObject* pModule = NULL;
+  PyObject* pFunc = NULL;
+  //const char* module_name = "multiply";
+  //const char* func_name = "multiply_list";
+
+  PyRun_SimpleString("import sys");
+  PyRun_SimpleString("from sklearn.ensemble import RandomForestRegressor");
+  PyRun_SimpleString("import numpy as np");
+  PyRun_SimpleString("from sklearn.externals import joblib");
+  PyRun_SimpleString("import matplotlib.pyplot as plt");
+  PyRun_SimpleString("from sklearn.metrics import mean_squared_error, r2_score");
+  PyRun_SimpleString("sys.path.append('./')");
+  
+  pModule = PyImport_ImportModule(module_name);
+  pFunc = PyObject_GetAttrString(pModule, func_name);
+
+
+  int L_size = x_test.size();
+
+  PyObject *PyList  = PyList_New(L_size);
+  PyObject *ArgList = PyTuple_New(2);
+
+  for(int i=0;i<PyList_Size(PyList);i++){
+     PyList_SetItem(PyList, i, PyFloat_FromDouble(x_test[i]));
+  }
+
+  PyTuple_SetItem(ArgList, 1, PyList);
+  PyTuple_SetItem(ArgList, 0, Py_BuildValue("s", model_path));// model_path should be string or const char*
+
+  
+  PyObject* pReturn = PyEval_CallObject(pFunc, ArgList);
+  double nResult;
+  PyArg_Parse(pReturn, "d", &nResult); 
+  Py_DECREF(pModule);
+  Py_DECREF(pFunc);
+  Py_DECREF(ArgList);
+  Py_DECREF(PyList);
+  Py_DECREF(pReturn);
+  Py_Finalize();
+  double Result = nResult;
+  std::cout<<"Random Forest Result "<<Result<<std::endl;
+  return nResult;
+
+}
 
 
 //a function used to calculated the Deep learning model based performance
@@ -2596,14 +2703,14 @@ double ConstGraph::PerformanceDriven_CalculateCost(design& caseNL, SeqPair& case
   //std::string circuit = "current_mirror_ota";
   std::string circuit = "cascode_current_mirror_ota";
 
-  //std::string model_name = "gcn";
+  std::string model_name = "gcn";
   //std::string model_name = "linear";
-  std::string model_name = "random";
+  //std::string model_name = "random_16";
   if(model_name=="gcn"){
     model_output_node_name = "lable/BiasAdd";
   }else if(model_name=="linear"){
     model_output_node_name = "lable";
-  }else if(model_name=="random"){
+  }else if(model_name=="random_16"){
     model_output_node_name = "probabilities";
   }
 
@@ -2826,14 +2933,14 @@ double ConstGraph::Deep_learning_model_Prediction(std::vector<double> feature_va
   int feature_size = feature_value.size();//feature_value.size();
   int device_feature_size = device_feature_value.size();//
   std::cout << "feature_size: " << feature_size << std::endl;
-  Tensor X(DT_FLOAT, TensorShape({ 1, feature_size })); //define a Tensor X, by default is [1, feature_size]
-  Tensor A(DT_FLOAT, TensorShape({ feature_size, feature_size })); //define a Tensor X, by default is [1, feature_size]
-  Tensor D(DT_FLOAT, TensorShape({ feature_size, feature_size })); //define a Tensor X, by default is [1, feature_size]
-  Tensor C(DT_FLOAT, TensorShape({ 1, device_feature_size })); //define a Tensor c, by default is [1, device_feature_size]
-  auto plane_tensor_X = X.tensor<float,2>(); //pointer of X
-  auto plane_tensor_A = A.tensor<float,2>(); //pointer of A
-  auto plane_tensor_D = D.tensor<float,2>(); //pointer of A
-  auto plane_tensor_C = C.tensor<float,2>(); //pointer of X
+  Tensor X(DT_DOUBLE, TensorShape({ 1, feature_size })); //define a Tensor X, by default is [1, feature_size]
+  Tensor A(DT_DOUBLE, TensorShape({ feature_size, feature_size })); //define a Tensor X, by default is [1, feature_size]
+  Tensor D(DT_DOUBLE, TensorShape({ feature_size, feature_size })); //define a Tensor X, by default is [1, feature_size]
+  Tensor C(DT_DOUBLE, TensorShape({ 1, device_feature_size })); //define a Tensor c, by default is [1, device_feature_size]
+  auto plane_tensor_X = X.tensor<double,2>(); //pointer of X
+  auto plane_tensor_A = A.tensor<double,2>(); //pointer of A
+  auto plane_tensor_D = D.tensor<double,2>(); //pointer of A
+  auto plane_tensor_C = C.tensor<double,2>(); //pointer of X
   std::cout<<"test flag 1"<<std::endl;
   for (int i = 0; i < feature_size; i++){
       plane_tensor_X(0,i) = feature_value.at(i);//1; //load data into X
@@ -2884,7 +2991,7 @@ double ConstGraph::Deep_learning_model_Prediction(std::vector<double> feature_va
   }else{
       cout << "Prection successfully run." << endl;
   }
-  auto out_tensor = outputs[0].tensor<float,2>(); // by default output is [1, 1]
+  auto out_tensor = outputs[0].tensor<double,2>(); // by default output is [1, 1]
   double performance = (double) out_tensor(0, 0);
 
   return performance;

@@ -365,7 +365,8 @@ std::map<double, SeqPair> Placer::PlacementCoreAspectRatio(design& designData, S
   GenerateValidSolution(designData, curr_sp, curr_sol, mode);
   //curr_sol.PrintConstGraph();
   //double curr_cost=curr_sol.CalculateCost(designData, curr_sp);
-  double curr_cost=curr_sol.PerformanceDriven_CalculateCost(designData, curr_sp);
+  //double curr_cost=curr_sol.PerformanceDriven_CalculateCost(designData, curr_sp);
+  double curr_cost=curr_sol.Other_PerformanceDriven_CalculateCost(designData, curr_sp);
   cout<<"Placer-Info: initial cost = "<<curr_cost<<endl;
 
   cout<<"Placer-Info: status ";cout.flush();
@@ -444,7 +445,8 @@ std::map<double, SeqPair> Placer::PlacementCoreAspectRatio(design& designData, S
       ConstGraph trial_sol;
       if(GenerateValidSolution(designData, trial_sp, trial_sol, mode)) {
         //double trial_cost=trial_sol.CalculateCost(designData, trial_sp);
-        double trial_cost=trial_sol.PerformanceDriven_CalculateCost(designData, trial_sp);
+        //double trial_cost=trial_sol.PerformanceDriven_CalculateCost(designData, trial_sp);
+        double trial_cost=trial_sol.Other_PerformanceDriven_CalculateCost(designData, trial_sp);
         bool Smark=false;
         delta_cost=trial_cost-curr_cost;
         if(delta_cost<0) {Smark=true;
@@ -473,7 +475,8 @@ std::map<double, SeqPair> Placer::PlacementCoreAspectRatio(design& designData, S
       if(update_index==updateThrd){
         curr_sol.Update_parameters(designData, curr_sp);
         //curr_cost = curr_sol.CalculateCost(designData, curr_sp);
-        curr_cost = curr_sol.PerformanceDriven_CalculateCost(designData, curr_sp);
+        //curr_cost = curr_sol.PerformanceDriven_CalculateCost(designData, curr_sp);
+        curr_cost = curr_sol.Other_PerformanceDriven_CalculateCost(designData, curr_sp);
         std::cout<<"updated cost: "<<curr_cost<<std::endl;
         oData[curr_cost]=curr_sp;
         ReshapeSeqPairMap(oData, nodeSize);

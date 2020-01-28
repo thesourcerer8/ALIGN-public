@@ -19,8 +19,14 @@
 #include "../PnRDB/datatype.h"
 #include "../PnRDB/readfile.h"
 
+#include <Python.h>
+#include <unicodeobject.h>
+#include <cstdio>
+
 #include <tensorflow/core/platform/env.h>
 #include <tensorflow/core/public/session.h>
+#include <tensorflow/c/c_api.h>
+
 #include <iostream>
 #include <string>  
 #include <vector>  
@@ -196,6 +202,8 @@ class ConstGraph
     void Deep_learning_model_readin_feature_name(std::vector<std::vector<double> > &feature_A, std::vector<std::vector<double> > &feature_D,std::vector<std::string> &dp_feature_name, std::string feature_name_path);
     void Deep_learning_transform_feature(std::vector<double> &feature_value,std::vector<std::string> &feature_name,std::vector<std::string> &dp_feature_name);
     void Deep_learning_model_readin_device_feature(std::vector<double> &feature_value, std::string feature_name_path);
+    double Other_PerformanceDriven_CalculateCost(design& caseNL, SeqPair& caseSP);
+    double Call_Machine_learning_model(std::string model_path,const char* module_name, const char* func_name, std::vector<double> x_test);
 
 };
 
