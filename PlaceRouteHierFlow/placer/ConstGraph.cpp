@@ -2704,16 +2704,6 @@ double ConstGraph::PerformanceDriven_CalculateCost(design& caseNL, SeqPair& case
   std::string circuit = "cascode_current_mirror_ota";
 
   std::string model_name = "gcn";
-  //std::string model_name = "linear";
-  //std::string model_name = "random_16";
-  if(model_name=="gcn"){
-    model_output_node_name = "lable/BiasAdd";
-  }else if(model_name=="linear"){
-    model_output_node_name = "lable";
-  }else if(model_name=="random_16"){
-    model_output_node_name = "probabilities";
-  }
-
   std::string gain_model_path = path+circuit+"/"+model_name+"/GCN_rcAC_gain.pb";
   std::string ugf_model_path = path+circuit+"/"+model_name+"/GCN_rcAC_ugf.pb"; 
   std::string pm_model_path = path+circuit+"/"+model_name+"/GCN_rcAC_pm.pb"; 
