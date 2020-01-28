@@ -28,6 +28,7 @@ TENSORFLOW_INCLUDE?=-I $(TENSORFLOW_DEPENDENCY)/bazel-genfiles \
 export TENSORFLOW_LIB_DIR=$(TENSORFLOW_DEPENDENCY)/bazel-bin/tensorflow
 
 export CXXFLAGS = $(OPTS) $(WARNS) -std=c++14 -m64 -pthread -isystem $(LIB_LP) -isystem $(SOURCE_LP) -I$(BOOST_LP) -I$(JSON)/include $(COVERAGE) -isystem $(GTEST_DIR)/include $(TENSORFLOW_INCLUDE) -I/usr/include/python3.6m -I/usr/include/python3.6m -fno-strict-aliasing -O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -m64 -mtune=generic -D_GNU_SOURCE -fPIC -fwrapv -DNDEBUG -O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -m64 -mtune=generic -D_GNU_SOURCE -fPIC -fwrapv
+
 export CXX=g++
 
 export LDFLAGS = $(COVERAGE) -L/usr/lib64 -lpython3.6m -lpthread -ldl -lutil -lm -Xlinker -export-dynamic

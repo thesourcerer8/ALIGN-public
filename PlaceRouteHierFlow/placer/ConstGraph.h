@@ -71,6 +71,7 @@ class ConstGraph
         }
       }
     };
+    bool import_python_package = true;
     struct dataNode {
       int node;
       int corr;
