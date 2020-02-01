@@ -2465,7 +2465,7 @@ void ConstGraph::Deep_learning_transform_feature(std::vector<double> &feature_va
 
         if(dp_feature_name[i]==feature_name[j]){
 
-            new_feature_value.push_back(feature_value[j]/40+50);
+            new_feature_value.push_back(feature_value[j]/200);
             new_feature_name.push_back(feature_name[j]);
             //new_feature_value.push_back(feature_value[j]);
             break;
@@ -2581,9 +2581,9 @@ double ConstGraph::Other_PerformanceDriven_CalculateCost(design& caseNL, SeqPair
   std::vector<std::string> dp_feature_name;
 
   std::string path = "/home/yaguang/Desktop/src/ALIGN-public/PlaceRouteHierFlow/Performance_Prediction/";
-  //std::string circuit = "five_transistor_ota";
+  std::string circuit = "five_transistor_ota";
   //std::string circuit = "current_mirror_ota";
-  std::string circuit = "cascode_current_mirror_ota";
+  //std::string circuit = "cascode_current_mirror_ota";
 
   //std::string model_name = "gcn";
   //std::string model_name = "linear";
@@ -2617,10 +2617,10 @@ double ConstGraph::Other_PerformanceDriven_CalculateCost(design& caseNL, SeqPair
   double ugf_weight = 1.0;
   double pm_weight = 1.0;
   double threedb_weight = 10.0;
-  double expected_gain = 26;
-  double expected_ugf = 1180000000;
-  double expected_pm = 91;
-  double expected_threedb = 50000000;
+  double expected_gain = 31.89; //26 31.89
+  double expected_ugf = 1506000000; //1180000000 1506000000
+  double expected_pm = 88.95; //91 88.95
+  double expected_threedb = 38270000; //50000000 38270000
 
   double cost = gain_weight*abs(expected_gain-predicted_gain)/expected_gain + ugf_weight*abs(expected_ugf-predicted_ugf)/expected_ugf + pm_weight*abs(expected_pm-predicted_pm)/expected_pm + threedb_weight*abs(expected_threedb-predicted_threedb)/expected_threedb;
   //cost = cost + predicted_gain*gain_weight;
@@ -2644,7 +2644,9 @@ double ConstGraph::Call_Machine_learning_model(std::string model_path,const char
   //const char* module_name = "multiply";
   //const char* func_name = "multiply_list";
   std::cout<<"other machin learning model step 2"<<std::endl;
-  //this->import 
+  //this->import
+  PyRun_SimpleString("from sklearn import linear"); 
+  PyRun_SimpleString("from sklearn import svm");
   PyRun_SimpleString("from sklearn.ensemble import RandomForestRegressor");
   PyRun_SimpleString("import numpy as np");
   PyRun_SimpleString("from sklearn.externals import joblib");
@@ -2762,10 +2764,10 @@ double ConstGraph::PerformanceDriven_CalculateCost(design& caseNL, SeqPair& case
   double ugf_weight = 1.0;
   double pm_weight = 1.0;
   double threedb_weight = 10.0;
-  double expected_gain = 26;
-  double expected_ugf = 1180000000;
-  double expected_pm = 91;
-  double expected_threedb = 50000000;
+  double expected_gain = 31.89;
+  double expected_ugf = 1506000000;
+  double expected_pm = 88.95;
+  double expected_threedb = 38270000;
 
   cost = cost + gain_weight*abs(expected_gain-predicted_gain)/expected_gain + ugf_weight*abs(expected_ugf-predicted_ugf)/expected_ugf + pm_weight*abs(expected_pm-predicted_pm)/expected_pm + threedb_weight*abs(expected_threedb-predicted_threedb)/expected_threedb;
   //cost = cost + predicted_gain*gain_weight;
