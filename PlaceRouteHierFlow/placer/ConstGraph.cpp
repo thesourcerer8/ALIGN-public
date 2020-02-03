@@ -2452,7 +2452,7 @@ void ConstGraph::Deep_learning_transform_feature(std::vector<double> &feature_va
   std::cout<<"feature name size "<<feature_name.size()<<" dp feature name size "<<dp_feature_name.size()<<std::endl;
   if(feature_name.size()!=dp_feature_name.size()){
       std::cout<<"Error: deep learning model inputs feature size is not correct";
-      return;
+      //return;
     }
 
   std::vector<double> new_feature_value;
