@@ -2,6 +2,11 @@ import json
 import sys
 
 #1. extend entire boundry
+def find_max(xy):
+  max_y = xy[3]
+  max_x = xy[4]
+  return max_x, max_y
+
 def extend(xy, extend_x, extend_y):
   max_y  = 0
   max_x = 0
@@ -75,7 +80,7 @@ for i in range(len(bgnstr)):
       if(not bgnstr[i]["elements"][j].__contains__("layer")):
         continue
       if bgnstr[i]["elements"][j]["layer"] == 12 or bgnstr[i]["elements"][j]["layer"] == 13:
-         max_x, max_y = extend(bgnstr[i]["elements"][j]["xy"], extend_x, extend_y)
+         max_x, max_y = find_max(bgnstr[i]["elements"][j]["xy"])
       # extend nwell 
       if bgnstr[i]["elements"][j]["layer"] == 1:
          max_x, max_y = extend(bgnstr[i]["elements"][j]["xy"], extend_x, extend_y)
@@ -115,9 +120,6 @@ for i in range(len(bgnstr)):
 
     bgnstr[i]["elements"].insert(index,active_ele)
     index = index + 1
-
-    bgnstr[i]["elements"].insert(index,sdt_ele)
-    index = index + 1 
     
     bgnstr[i]["elements"].insert(index,lisd_ele)
     index = index + 1
@@ -133,6 +135,9 @@ for i in range(len(bgnstr)):
 
     bgnstr[i]["elements"].insert(index,m2_ele)
     index = index + 1
+
+    bgnstr[i]["elements"].insert(index,sdt_ele)
+    index = index + 1 
 
    
 new_json = json.dumps(data, indent = 4)
