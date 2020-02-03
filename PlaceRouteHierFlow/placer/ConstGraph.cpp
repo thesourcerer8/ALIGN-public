@@ -2580,10 +2580,10 @@ double ConstGraph::Other_PerformanceDriven_CalculateCost(design& caseNL, SeqPair
   std::vector<std::string> feature_name;
   std::vector<std::string> dp_feature_name;
 
-  std::string path = "/home/yaguang/Desktop/src/ALIGN-public/PlaceRouteHierFlow/Performance_Prediction/";
-  std::string circuit = "five_transistor_ota";
+  std::string path = "/home/yaguang/Desktop/Research/Performance_Driven/branch/ALIGN-public/PlaceRouteHierFlow/Performance_Prediction/";
+  //std::string circuit = "five_transistor_ota";
   //std::string circuit = "current_mirror_ota";
-  //std::string circuit = "cascode_current_mirror_ota";
+  std::string circuit = "cascode_current_mirror_ota";
 
   //std::string model_name = "gcn";
   //std::string model_name = "linear";
@@ -2654,7 +2654,7 @@ double ConstGraph::Call_Machine_learning_model(std::string model_path,const char
   PyRun_SimpleString("from sklearn.metrics import mean_squared_error, r2_score");
   PyRun_SimpleString("import sys");
   PyRun_SimpleString("sys.path.append('./')");
-  PyRun_SimpleString("sys.path.append('/home/yaguang/Desktop/src/ALIGN-public/PlaceRouteHierFlow/placer')");
+  PyRun_SimpleString("sys.path.append('/home/yaguang/Desktop/Research/Performance_Driven/branch/ALIGN-public/PlaceRouteHierFlow/placer')");
   std::cout<<"other machin learning model step 3"<<std::endl;
   pModule = PyImport_ImportModule(module_name);
   std::cout<<"pModule "<<pModule<<std::endl;
@@ -2719,7 +2719,7 @@ double ConstGraph::PerformanceDriven_CalculateCost(design& caseNL, SeqPair& case
 
   std::string model_input_node_name = "feature";
   std::string model_output_node_name = "lable/BiasAdd";
-  std::string path = "/home/yaguang/Desktop/src/ALIGN-public/PlaceRouteHierFlow/Performance_Prediction/";
+  std::string path = "/home/yaguang/Desktop/Research/Performance_Driven/branch/ALIGN-public/PlaceRouteHierFlow/Performance_Prediction/";
   //std::string circuit = "five_transistor_ota";
   //std::string circuit = "current_mirror_ota";
   std::string circuit = "cascode_current_mirror_ota";
@@ -2735,6 +2735,8 @@ double ConstGraph::PerformanceDriven_CalculateCost(design& caseNL, SeqPair& case
   Deep_learning_model_readin_feature_name(feature_A,feature_D,dp_feature_name,feature_name_path);
   Deep_learning_transform_feature(feature_value,feature_name,dp_feature_name);
   Deep_learning_model_readin_device_feature(device_feature,device_feature_path);
+
+
 
   std::cout<<"device feature"<<std::endl;
 
@@ -2758,6 +2760,14 @@ double ConstGraph::PerformanceDriven_CalculateCost(design& caseNL, SeqPair& case
   double predicted_threedb = Deep_learning_model_Prediction(feature_value, feature_name, threedb_model_path, model_input_node_name, model_output_node_name, feature_A, feature_D, device_feature, model_name); //maybe gain a model, uf a model
 
   std::cout<<"model prediction "<<"gain "<<predicted_gain<<" ugf "<<predicted_ugf<<" pm "<<predicted_pm<<" threedb "<<predicted_threedb<<std::endl;
+
+  this->Features = feature_value;
+  this->Predicted_performance.clear();
+  Predicted_performance.push_back(predicted_gain);
+  Predicted_performance.push_back(predicted_ugf);
+  Predicted_performance.push_back(predicted_pm);
+  Predicted_performance.push_back(predicted_threedb);
+  
 
   //step 3. weighted sum up the performances (gain, uf, PM) and return as cost //needs modifacation
   double gain_weight = 1.0;
@@ -6242,5 +6252,19 @@ void ConstGraph::PlotPlacementAP(design& caseNL, Aplace& caseAP, string outfile)
   fout<<"\nEOF"<<endl;
   fout<<endl<<"pause -1 \'Press any key\'";
   fout.close();
+}
+
+void ConstGraph::WriteOut_Features(){
+
+  ofstream fout;
+  std::string outfile = "Feature_value";
+  fout.open(outfile.c_str());
+
+  for(int i=0;i<Features.size();i++){
+     fout<<Features[i]<<" ";
+  }
+  fout<<std::endl;
+  fout.close();
+    
 }
 

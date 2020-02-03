@@ -16,7 +16,7 @@ WARNS?=-Wall
 JSON?=/opt/json
 #TENSORFLOW_DEPENDENCY=$(abspath tensorflow_dependency)
 #TENSORFLOW_DEPENDENCY=/home/yaguang/Desktop/opt/tensorflow
-TENSORFLOW_DEPENDENCY=/home/yaguang/Desktop/src/tensorflow
+TENSORFLOW_DEPENDENCY=/home/yaguang/Desktop/Research/src/tensorflow
 TENSORFLOW_INCLUDE?=-I $(TENSORFLOW_DEPENDENCY)/bazel-genfiles \
             -I $(TENSORFLOW_DEPENDENCY)/tensorflow/contrib/makefile/downloads/nsync/public \
             -I $(TENSORFLOW_DEPENDENCY)/tensorflow/contrib/makefile/downloads/protobuf/src  \

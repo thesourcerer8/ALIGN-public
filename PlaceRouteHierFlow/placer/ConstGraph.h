@@ -107,6 +107,8 @@ class ConstGraph
     int sinkNode;
     vector<Vertex> HGraph;
     vector<Vertex> VGraph;
+    vector<double> Predicted_performance;
+    vector<double> Features;
 
     bool AddEdgeforVertex(int current, int next, int weight, vector<Vertex> &graph);
     //bool CheckOppositeEdge(int current, int next, vector<Vertex> &graph);
@@ -205,6 +207,7 @@ class ConstGraph
     void Deep_learning_model_readin_device_feature(std::vector<double> &feature_value, std::string feature_name_path);
     double Other_PerformanceDriven_CalculateCost(design& caseNL, SeqPair& caseSP);
     double Call_Machine_learning_model(std::string model_path,const char* module_name, const char* func_name, std::vector<double> x_test);
+    void WriteOut_Features();
 
 };
 
