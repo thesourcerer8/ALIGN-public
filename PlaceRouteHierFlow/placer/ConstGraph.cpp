@@ -2625,6 +2625,13 @@ double ConstGraph::Other_PerformanceDriven_CalculateCost(design& caseNL, SeqPair
   double cost = gain_weight*abs(expected_gain-predicted_gain)/expected_gain + ugf_weight*abs(expected_ugf-predicted_ugf)/expected_ugf + pm_weight*abs(expected_pm-predicted_pm)/expected_pm + threedb_weight*abs(expected_threedb-predicted_threedb)/expected_threedb;
   //cost = cost + predicted_gain*gain_weight;
 
+  this->Features = feature_value;
+  this->Predicted_performance.clear();
+  Predicted_performance.push_back(predicted_gain);
+  Predicted_performance.push_back(predicted_ugf);
+  Predicted_performance.push_back(predicted_pm);
+  Predicted_performance.push_back(predicted_threedb);
+
   std::cout<<"deep learning cost "<<cost<<std::endl;
   return cost;  
 
