@@ -87,25 +87,49 @@ for i in range(len(bgnstr)):
     h = w_m2
 
     active_ele = add_certain_layer("boundary", 11, 0, x, y, w, h) #0 drawing, x= 0 , y = max_y + pitch of m2 , w = w of the boundry, h = m2 width
-    bgnstr[i]["elements"].append(active_ele)
+    #bgnstr[i]["elements"].append(active_ele)
     # add LISD
     lisd_ele = add_certain_layer("boundary", 17, 0, x, y, w, h) #0 drawing, x= 0 , y = max_y + pitch of m2 , w = w of the boundry, h = m2 width
-    bgnstr[i]["elements"].append(lisd_ele)
+    #bgnstr[i]["elements"].append(lisd_ele)
     # add v0
     v0_ele = add_certain_layer("boundary", 18, 0, x, y, w, h) #0 drawing, x= 0 , y = max_y + pitch of m2 , w = w of the boundry, h = m2 width
-    bgnstr[i]["elements"].append(v0_ele)
+    #bgnstr[i]["elements"].append(v0_ele)
     # add M1
     m1_ele = add_certain_layer("boundary", 19, 0, x, y, w, h) #0 drawing, x= 0 , y = max_y + pitch of m2 , w = w of the boundry, h = m2 width
-    bgnstr[i]["elements"].append(m1_ele)
+    #bgnstr[i]["elements"].append(m1_ele)
     # add V1
     v1_ele = add_certain_layer("boundary", 21, 0, x, y, w, h) #0 drawing, x= 0 , y = max_y + pitch of m2 , w = w of the boundry, h = m2 width
-    bgnstr[i]["elements"].append(v1_ele)
+    #bgnstr[i]["elements"].append(v1_ele)
     # add M2
     m2_ele = add_certain_layer("boundary", 20, 0, x, y, w, h) #0 drawing, x= 0 , y = max_y + pitch of m2 , w = w of the boundry, h = m2 width
-    bgnstr[i]["elements"].append(m2_ele)
+    #bgnstr[i]["elements"].append(m2_ele)
     # add SDT
     sdt_ele = add_certain_layer("boundary", 88, 0, x, y, w, h) #0 drawing, x= 0 , y = max_y + pitch of m2 , w = w of the boundry, h = m2 width
-    bgnstr[i]["elements"].append(sdt_ele)    
+    #bgnstr[i]["elements"].append(sdt_ele)
+
+    index = 0
+    for j in range(len(bgnstr[i]["elements"])):
+      if bgnstr[i]["elements"][j]["type"]=="sref":
+        index = j
+        break
+    
+    bgnstr[i]["elements"].insert(index,lisd_ele)
+    index = index + 1
+
+    bgnstr[i]["elements"].insert(index,v0_ele)
+    index = index + 1
+
+    bgnstr[i]["elements"].insert(index,m1_ele)
+    index = index + 1
+
+    bgnstr[i]["elements"].insert(index,v1_ele)
+    index = index + 1
+
+    bgnstr[i]["elements"].insert(index,m2_ele)
+    index = index + 1
+
+    bgnstr[i]["elements"].insert(index,sdt_ele)
+    index = index + 1    
 
 new_json = json.dumps(data, indent = 4)
 
