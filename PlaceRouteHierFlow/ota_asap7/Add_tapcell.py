@@ -112,6 +112,12 @@ for i in range(len(bgnstr)):
       if bgnstr[i]["elements"][j]["type"]=="sref":
         index = j
         break
+
+    bgnstr[i]["elements"].insert(index,active_ele)
+    index = index + 1
+
+    bgnstr[i]["elements"].insert(index,sdt_ele)
+    index = index + 1 
     
     bgnstr[i]["elements"].insert(index,lisd_ele)
     index = index + 1
@@ -128,9 +134,7 @@ for i in range(len(bgnstr)):
     bgnstr[i]["elements"].insert(index,m2_ele)
     index = index + 1
 
-    bgnstr[i]["elements"].insert(index,sdt_ele)
-    index = index + 1    
-
+   
 new_json = json.dumps(data, indent = 4)
 
 #with open("new.json",'w', encoding='utf-8') as f:
