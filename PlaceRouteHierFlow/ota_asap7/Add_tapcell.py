@@ -74,7 +74,7 @@ for i in range(len(bgnstr)):
       #print(bgnstr[i]["elements"][j])
       if(not bgnstr[i]["elements"][j].__contains__("layer")):
         continue
-      if bgnstr[i]["elements"][j]["layer"] == 7 or bgnstr[i]["elements"][j]["layer"] == 8 or bgnstr[i]["elements"][j]["layer"] == 100:
+      if bgnstr[i]["elements"][j]["layer"] == 12 or bgnstr[i]["elements"][j]["layer"] == 13:
          max_x, max_y = extend(bgnstr[i]["elements"][j]["xy"], extend_x, extend_y)
       # extend nwell 
       if bgnstr[i]["elements"][j]["layer"] == 1:
