@@ -1,4 +1,4 @@
-file_name=ota_asap7
+file_name=cascode_current_mirror_ota
 
 lef=.lef
 v=.v
@@ -21,21 +21,23 @@ gds_folder=$file_name$gds
 
 mkdir $gds_folder
 
-source /home/yaguang/Desktop/src/work_branch/general/bin/activate
+source /home/yaguang/Desktop/Research/Performance_Driven/work_dir/general/bin/activate
 
 export LD_LIBRARY_PATH=/usr/local/lib/lpsolve/lp_solve_5.5.2.5_dev_ux64/
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/yaguang/Desktop/opt/tensorflow/bazel-bin/tensorflow
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/yaguang/Desktop/Research/src/tensorflow/bazel-bin/tensorflow
 
-for i in $(seq 0 1 10)
+index=0
+
+for i in $(seq 0 10 60)
 do
-  for j in $(seq 0 1 10)
+  for j in $(seq 0 10 60)
   do
-    for q in $(seq 0 1 10)
+    for q in $(seq 0 10 60)
     do
-      for p in $(seq 0 1 10)
+      for p in $(seq 0 10 60)
       do
 
-       index=$((i*1000+j*100+q*10+p*1))
+       index=$((index+1))
        mkdir $gds_folder$slash$index
        PNRDB_disable_io=1 ./pnr_compiler ./$file_name $lef_file $v_file $map_file layers.json $file_name 1 0 $i $j $q $p | tee log && python json2gds.py $source_folder$slash$source_file $target_file && cp $target_file $gds_folder$slash$index$slash$target_file && cp $Feature_value_file $gds_folder$slash$index$slash$Feature_value_file && rm $Feature_value_file && rm -r $source_folder
 
