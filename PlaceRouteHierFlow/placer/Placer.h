@@ -34,6 +34,10 @@ class Placer {
     };
     //design designData;
     //PnRDB::hierNode node;
+    int gain_weight;
+    int ugf_weight;
+    int pm_weight;
+    int threedb_weight;
     bool GenerateValidSolution(design& mydesign, SeqPair& curr_sp, ConstGraph& curr_sol, int mode);
     void PlacementRegular(PnRDB::hierNode& node, string opath, int effort, PnRDB::Drc_info& drcInfo); // do placement with simulated annealing 
     void PlacementMixSA(PnRDB::hierNode& node, string opath, int effort, PnRDB::Drc_info& drcInfo); // do placement with mix-sized simulated annealing
