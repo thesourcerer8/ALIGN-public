@@ -13,6 +13,10 @@ Placer::Placer(PnRDB::hierNode& node, string opath, int effort, PnRDB::Drc_info&
 }
 
 Placer::Placer(std::vector<PnRDB::hierNode>& nodeVec, string opath, int effort, PnRDB::Drc_info& drcInfo) {
+  this->gain_weight = gain_weight;
+  this->ugf_weight = ugf_weight;
+  this->pm_weight = pm_weight;
+  this->threedb_weight = threedb_weight;  
   PlacementRegularAspectRatio(nodeVec, opath, effort, drcInfo);
   //PlacementMixSAAspectRatio(nodeVec, opath, effort);
   //PlacementMixAPAspectRatio(nodeVec, opath, effort);
