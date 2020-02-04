@@ -37,7 +37,7 @@ do
 
        index=$((i*1000+j*100+q*10+p*1))
        mkdir $gds_folder$slash$index
-      ./pnr_compiler ./$file_name $lef_file $v_file $map_file layers.json $file_name 1 0 $i $j $q $p | tee log && python json2gds.py $source_folder$slash$source_file $target_file && cp $target_file $gds_folder$slash$index$slash$target_file && cp $Feature_value_file $gds_folder$slash$index$slash$Feature_value_file
+      ./pnr_compiler ./$file_name $lef_file $v_file $map_file layers.json $file_name 1 0 $i $j $q $p | tee log && python json2gds.py $source_folder$slash$source_file $target_file && cp $target_file $gds_folder$slash$index$slash$target_file && cp $Feature_value_file $gds_folder$slash$index$slash$Feature_value_file && rm $Feature_value_file && rm -r $source_folder
 
       done
     done
