@@ -52,7 +52,7 @@ class Placer {
 
   public:
     Placer(PnRDB::hierNode& node, string opath, int effort, PnRDB::Drc_info& drcInfo);
-    Placer(std::vector<PnRDB::hierNode>& nodeVec, string opath, int effort, PnRDB::Drc_info& drcInfo);
+    Placer(std::vector<PnRDB::hierNode>& nodeVec, string opath, int effort, PnRDB::Drc_info& drcInfo, int gain_weight, int ugf_weight, int pm_weight ,int threedb_weight);
     //Placer(PnRDB::hierNode& input_node); // Constructor
     //PnRDB::hierNode CheckoutHierNode(); // Output hier Node after placement
 };
