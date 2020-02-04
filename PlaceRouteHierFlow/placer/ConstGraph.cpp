@@ -2571,7 +2571,7 @@ void ConstGraph::Deep_learning_model_readin_device_feature(std::vector<double> &
   
 }
 
-double ConstGraph::Other_PerformanceDriven_CalculateCost(design& caseNL, SeqPair& caseSP){
+double ConstGraph::Other_PerformanceDriven_CalculateCost(design& caseNL, SeqPair& caseSP, int gain_wieght, int ugf_weight, int pm_weight, int threedb_weight){
 
   std::vector<double> feature_value;
   std::vector<std::vector<double>> feature_A;
@@ -2709,7 +2709,7 @@ double ConstGraph::Call_Machine_learning_model(std::string model_path,const char
 
 
 //a function used to calculated the Deep learning model based performance
-double ConstGraph::PerformanceDriven_CalculateCost(design& caseNL, SeqPair& caseSP){
+double ConstGraph::PerformanceDriven_CalculateCost(design& caseNL, SeqPair& caseSP, int gain_wieght, int ugf_weight, int pm_weight, int threedb_weight){
 
   double cost = 0;
   std::vector<double> feature_value;
