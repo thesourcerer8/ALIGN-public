@@ -26,18 +26,18 @@ source /home/yaguang/Desktop/src/work_branch/general/bin/activate
 export LD_LIBRARY_PATH=/usr/local/lib/lpsolve/lp_solve_5.5.2.5_dev_ux64/
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/yaguang/Desktop/opt/tensorflow/bazel-bin/tensorflow
 
-for i in $(seq 0 1 1)
+for i in $(seq 0 1 10)
 do
-  for j in $(seq 0 1 1)
+  for j in $(seq 0 1 10)
   do
-    for q in $(seq 0 1 1)
+    for q in $(seq 0 1 10)
     do
-      for p in $(seq 0 1 1)
+      for p in $(seq 0 1 10)
       do
 
        index=$((i*1000+j*100+q*10+p*1))
        mkdir $gds_folder$slash$index
-      ./pnr_compiler ./$file_name $lef_file $v_file $map_file layers.json $file_name 1 0 $i $j $q $p | tee log && python json2gds.py $source_folder$slash$source_file $target_file && cp $target_file $gds_folder$slash$index$slash$target_file && cp $Feature_value_file $gds_folder$slash$index$slash$Feature_value_file && rm $Feature_value_file && rm -r $source_folder
+       PNRDB_disable_io=1 ./pnr_compiler ./$file_name $lef_file $v_file $map_file layers.json $file_name 1 0 $i $j $q $p | tee log && python json2gds.py $source_folder$slash$source_file $target_file && cp $target_file $gds_folder$slash$index$slash$target_file && cp $Feature_value_file $gds_folder$slash$index$slash$Feature_value_file && rm $Feature_value_file && rm -r $source_folder
 
       done
     done
