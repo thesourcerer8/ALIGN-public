@@ -2571,7 +2571,7 @@ void ConstGraph::Deep_learning_model_readin_device_feature(std::vector<double> &
   
 }
 
-double ConstGraph::Other_PerformanceDriven_CalculateCost(design& caseNL, SeqPair& caseSP, int gain_wieght, int ugf_weight, int pm_weight, int threedb_weight){
+double ConstGraph::Other_PerformanceDriven_CalculateCost(design& caseNL, SeqPair& caseSP, int gain_weight, int ugf_weight, int pm_weight, int threedb_weight){
 
   std::vector<double> feature_value;
   std::vector<std::vector<double>> feature_A;
@@ -2580,10 +2580,10 @@ double ConstGraph::Other_PerformanceDriven_CalculateCost(design& caseNL, SeqPair
   std::vector<std::string> feature_name;
   std::vector<std::string> dp_feature_name;
 
-  std::string path = "/home/yaguang/Desktop/Research/Performance_Driven/branch/ALIGN-public/PlaceRouteHierFlow/Performance_Prediction/";
-  //std::string circuit = "five_transistor_ota";
+  std::string path = "/home/yaguang/Desktop/src/ALIGN-public/PlaceRouteHierFlow/Performance_Prediction/";
+  std::string circuit = "five_transistor_ota";
   //std::string circuit = "current_mirror_ota";
-  std::string circuit = "cascode_current_mirror_ota";
+  //std::string circuit = "cascode_current_mirror_ota";
 
   //std::string model_name = "gcn";
   //std::string model_name = "linear";
@@ -2613,10 +2613,6 @@ double ConstGraph::Other_PerformanceDriven_CalculateCost(design& caseNL, SeqPair
  std::cout<<"model prediction "<<"gain "<<predicted_gain<<" ugf "<<predicted_ugf<<" pm "<<predicted_pm<<" threedb "<<predicted_threedb<<std::endl;
 
   //step 3. weighted sum up the performances (gain, uf, PM) and return as cost //needs modifacation
-  double gain_weight = 1.0;
-  double ugf_weight = 1.0;
-  double pm_weight = 1.0;
-  double threedb_weight = 10.0;
   double expected_gain = 31.89; //26 31.89
   double expected_ugf = 1506000000; //1180000000 1506000000
   double expected_pm = 88.95; //91 88.95
@@ -2661,7 +2657,7 @@ double ConstGraph::Call_Machine_learning_model(std::string model_path,const char
   PyRun_SimpleString("from sklearn.metrics import mean_squared_error, r2_score");
   PyRun_SimpleString("import sys");
   PyRun_SimpleString("sys.path.append('./')");
-  PyRun_SimpleString("sys.path.append('/home/yaguang/Desktop/Research/Performance_Driven/branch/ALIGN-public/PlaceRouteHierFlow/placer')");
+  PyRun_SimpleString("sys.path.append('/home/yaguang/Desktop/src/ALIGN-public/PlaceRouteHierFlow/placer')");
   std::cout<<"other machin learning model step 3"<<std::endl;
   pModule = PyImport_ImportModule(module_name);
   std::cout<<"pModule "<<pModule<<std::endl;
@@ -2709,7 +2705,7 @@ double ConstGraph::Call_Machine_learning_model(std::string model_path,const char
 
 
 //a function used to calculated the Deep learning model based performance
-double ConstGraph::PerformanceDriven_CalculateCost(design& caseNL, SeqPair& caseSP, int gain_wieght, int ugf_weight, int pm_weight, int threedb_weight){
+double ConstGraph::PerformanceDriven_CalculateCost(design& caseNL, SeqPair& caseSP, int gain_weight, int ugf_weight, int pm_weight, int threedb_weight){
 
   double cost = 0;
   std::vector<double> feature_value;
@@ -2726,10 +2722,10 @@ double ConstGraph::PerformanceDriven_CalculateCost(design& caseNL, SeqPair& case
 
   std::string model_input_node_name = "feature";
   std::string model_output_node_name = "lable/BiasAdd";
-  std::string path = "/home/yaguang/Desktop/Research/Performance_Driven/branch/ALIGN-public/PlaceRouteHierFlow/Performance_Prediction/";
-  //std::string circuit = "five_transistor_ota";
+  std::string path = "/home/yaguang/Desktop/src/ALIGN-public/PlaceRouteHierFlow/Performance_Prediction/";
+  std::string circuit = "five_transistor_ota";
   //std::string circuit = "current_mirror_ota";
-  std::string circuit = "cascode_current_mirror_ota";
+  //std::string circuit = "cascode_current_mirror_ota";
 
   std::string model_name = "gcn";
   std::string gain_model_path = path+circuit+"/"+model_name+"/GCN_rcAC_gain.pb";
@@ -2777,10 +2773,6 @@ double ConstGraph::PerformanceDriven_CalculateCost(design& caseNL, SeqPair& case
   
 
   //step 3. weighted sum up the performances (gain, uf, PM) and return as cost //needs modifacation
-  double gain_weight = 1.0;
-  double ugf_weight = 1.0;
-  double pm_weight = 1.0;
-  double threedb_weight = 10.0;
   double expected_gain = 31.89;
   double expected_ugf = 1506000000;
   double expected_pm = 88.95;

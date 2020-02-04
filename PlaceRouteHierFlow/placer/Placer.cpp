@@ -12,7 +12,7 @@ Placer::Placer(PnRDB::hierNode& node, string opath, int effort, PnRDB::Drc_info&
   PlacementRegular(node, opath, effort, drcInfo);
 }
 
-Placer::Placer(std::vector<PnRDB::hierNode>& nodeVec, string opath, int effort, PnRDB::Drc_info& drcInfo) {
+Placer::Placer(std::vector<PnRDB::hierNode>& nodeVec, string opath, int effort, PnRDB::Drc_info& drcInfo, int gain_weight, int ugf_weight, int pm_weight, int threedb_weight) {
   this->gain_weight = gain_weight;
   this->ugf_weight = ugf_weight;
   this->pm_weight = pm_weight;
@@ -369,8 +369,8 @@ std::map<double, SeqPair> Placer::PlacementCoreAspectRatio(design& designData, S
   GenerateValidSolution(designData, curr_sp, curr_sol, mode);
   //curr_sol.PrintConstGraph();
   //double curr_cost=curr_sol.CalculateCost(designData, curr_sp);
-  //double curr_cost=curr_sol.PerformanceDriven_CalculateCost(designData, curr_sp, gain_wieght, ugf_weight, pm_weight, threedb_weight);
-  double curr_cost=curr_sol.Other_PerformanceDriven_CalculateCost(designData, curr_sp, gain_wieght, ugf_weight, pm_weight, threedb_weight);
+  //double curr_cost=curr_sol.PerformanceDriven_CalculateCost(designData, curr_sp, gain_weight, ugf_weight, pm_weight, threedb_weight);
+  double curr_cost=curr_sol.Other_PerformanceDriven_CalculateCost(designData, curr_sp, gain_weight, ugf_weight, pm_weight, threedb_weight);
   cout<<"Placer-Info: initial cost = "<<curr_cost<<endl;
 
   cout<<"Placer-Info: status ";cout.flush();
@@ -449,8 +449,8 @@ std::map<double, SeqPair> Placer::PlacementCoreAspectRatio(design& designData, S
       ConstGraph trial_sol;
       if(GenerateValidSolution(designData, trial_sp, trial_sol, mode)) {
         //double trial_cost=trial_sol.CalculateCost(designData, trial_sp);
-        //double trial_cost=trial_sol.PerformanceDriven_CalculateCost(designData, trial_sp, gain_wieght, ugf_weight, pm_weight, threedb_weight);
-        double trial_cost=trial_sol.Other_PerformanceDriven_CalculateCost(designData, trial_sp, gain_wieght, ugf_weight, pm_weight, threedb_weight);
+        //double trial_cost=trial_sol.PerformanceDriven_CalculateCost(designData, trial_sp, gain_weight, ugf_weight, pm_weight, threedb_weight);
+        double trial_cost=trial_sol.Other_PerformanceDriven_CalculateCost(designData, trial_sp, gain_weight, ugf_weight, pm_weight, threedb_weight);
         bool Smark=false;
         delta_cost=trial_cost-curr_cost;
         if(delta_cost<0) {Smark=true;
@@ -479,8 +479,8 @@ std::map<double, SeqPair> Placer::PlacementCoreAspectRatio(design& designData, S
       if(update_index==updateThrd){
         curr_sol.Update_parameters(designData, curr_sp);
         //curr_cost = curr_sol.CalculateCost(designData, curr_sp);
-        //curr_cost = curr_sol.PerformanceDriven_CalculateCost(designData, curr_sp, gain_wieght, ugf_weight, pm_weight, threedb_weight);
-        curr_cost = curr_sol.Other_PerformanceDriven_CalculateCost(designData, curr_sp, gain_wieght, ugf_weight, pm_weight, threedb_weight);
+        //curr_cost = curr_sol.PerformanceDriven_CalculateCost(designData, curr_sp, gain_weight, ugf_weight, pm_weight, threedb_weight);
+        curr_cost = curr_sol.Other_PerformanceDriven_CalculateCost(designData, curr_sp, gain_weight, ugf_weight, pm_weight, threedb_weight);
         std::cout<<"updated cost: "<<curr_cost<<std::endl;
         oData[curr_cost]=curr_sp;
         ReshapeSeqPairMap(oData, nodeSize);

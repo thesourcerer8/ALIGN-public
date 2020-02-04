@@ -196,7 +196,7 @@ class ConstGraph
     void UpdateDesignHierNode4AP(design& caseNL, design& reducedNL, SeqPair& reducedSP, PnRDB::hierNode& node);
     void UpdateSymmetryNetInfo(design& caseNL, PnRDB::hierNode& node, int i, int SBidx, placerDB::Smark axis_dir);
 
-    double PerformanceDriven_CalculateCost(design& caseNL, SeqPair& caseSP);
+    double PerformanceDriven_CalculateCost(design& caseNL, SeqPair& caseSP, int gain_weight, int ugf_weight, int pm_weight, int threedb_weight);
     void ExtractFeatures(design& caseNL, SeqPair& caseSP, std::vector<double> &feature_value, std::vector<std::string> &feature_name);
     double Deep_learning_model_Prediction(std::vector<double> feature_value, std::vector<std::string> feature_name, \
                                                       std::string model_path, std::string input_node_name, std::string output_node_name,  \
@@ -205,7 +205,7 @@ class ConstGraph
     void Deep_learning_model_readin_feature_name(std::vector<std::vector<double> > &feature_A, std::vector<std::vector<double> > &feature_D,std::vector<std::string> &dp_feature_name, std::string feature_name_path);
     void Deep_learning_transform_feature(std::vector<double> &feature_value,std::vector<std::string> &feature_name,std::vector<std::string> &dp_feature_name);
     void Deep_learning_model_readin_device_feature(std::vector<double> &feature_value, std::string feature_name_path);
-    double Other_PerformanceDriven_CalculateCost(design& caseNL, SeqPair& caseSP);
+    double Other_PerformanceDriven_CalculateCost(design& caseNL, SeqPair& caseSP, int gain_weight, int ugf_weight, int pm_weight, int threedb_weight);
     double Call_Machine_learning_model(std::string model_path,const char* module_name, const char* func_name, std::vector<double> x_test);
     void WriteOut_Features();
 

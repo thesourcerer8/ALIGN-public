@@ -73,7 +73,7 @@ static void generic_placer_test( const string& topcell)
   EXPECT_EQ( current_node.name, topcell);
 
   std::vector<PnRDB::hierNode> nodeVec(1, current_node);
-  Placer curr_plc( nodeVec, opath, 0, drc_info);
+  Placer curr_plc( nodeVec, opath, 0, drc_info, 1, 1, 1, 1);
 
   PnRDB::hierNode post_current_node;
   DB.ReadDBJSON( post_current_node, "gold/" + topcell + "_0.post_pl.db.json");
