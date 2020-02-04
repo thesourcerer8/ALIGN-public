@@ -183,6 +183,12 @@ int main(int argc, char** argv ){
   int effort=std::stoi(argv[8]);
   if(fpath.back()=='/') {fpath.erase(fpath.end()-1);}
   if(opath.back()!='/') {opath+="/";}
+	
+
+  int gain_weight = std::stoi(argv[9]);
+  int ugf_weight = std::stoi(argv[10]);
+  int pm_weight = std::stoi(argv[11]);
+  int threedb_weight = std::stoi(argv[12]);
 
   // Following codes try to get the path of binary codes
   string binary_directory = argv[0];
@@ -236,7 +242,7 @@ int main(int argc, char** argv ){
     
     // Placement
     std::vector<PnRDB::hierNode> nodeVec(numLayout, current_node);
-    Placer curr_plc(nodeVec, opath, effort, const_cast<PnRDB::Drc_info&>(drcInfo)); // do placement and update data in current node
+    Placer curr_plc(nodeVec, opath, effort, const_cast<PnRDB::Drc_info&>(drcInfo), gain_weight, ugf_weight, pm_weight, threedb_weight ); // do placement and update data in current node
 
     for(unsigned int lidx=0; lidx<nodeVec.size(); ++lidx) {
       save_state( DB, nodeVec[lidx], lidx, opath, ".post_pl", "End Placement", skip_saving_state);
