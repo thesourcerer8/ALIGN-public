@@ -6,12 +6,7 @@ MACRO DCL_NMOS_n12_X1_Y1
     DIRECTION INOUT ;
     USE SIGNAL ;
     PORT
-      LAYER M2 ;
-        RECT 0.040 0.099 0.284 0.117 ;
-      LAYER M2 ;
-        RECT 0.040 0.153 0.284 0.171 ;
-      LAYER M2 ;
-        RECT 0.040 0.207 0.284 0.225 ;
+
       LAYER M3 ;
         RECT 0.153 0.094 0.171 0.446 ;
     END
@@ -20,8 +15,6 @@ MACRO DCL_NMOS_n12_X1_Y1
     DIRECTION INOUT ;
     USE SIGNAL ;
     PORT
-      LAYER M2 ;
-        RECT 0.094 0.261 0.392 0.279 ;
       LAYER M3 ;
         RECT 0.207 0.094 0.225 0.446 ;
     END
@@ -35,6 +28,14 @@ MACRO DCL_NMOS_n12_X1_Y1
     END
   END BG
   OBS
+    LAYER M2 ;
+      RECT 0.094 0.261 0.392 0.279 ;
+    LAYER M2 ;
+      RECT 0.040 0.099 0.284 0.117 ;
+    LAYER M2 ;
+      RECT 0.040 0.153 0.284 0.171 ;
+    LAYER M2 ;
+      RECT 0.040 0.207 0.284 0.225 ;
     LAYER M1 ;
       RECT 0.099 0.040 0.117 0.500 ;
     LAYER M1 ;
@@ -59,12 +60,6 @@ MACRO DCL_NMOS_n12_X2_Y1
     DIRECTION INOUT ;
     USE SIGNAL ;
     PORT
-      LAYER M2 ;
-        RECT 0.040 0.099 0.716 0.117 ;
-      LAYER M2 ;
-        RECT 0.040 0.153 0.716 0.171 ;
-      LAYER M2 ;
-        RECT 0.040 0.207 0.716 0.225 ;
       LAYER M3 ;
         RECT 0.369 0.094 0.387 0.446 ;
     END
@@ -73,8 +68,6 @@ MACRO DCL_NMOS_n12_X2_Y1
     DIRECTION INOUT ;
     USE SIGNAL ;
     PORT
-      LAYER M2 ;
-        RECT 0.094 0.261 0.824 0.279 ;
       LAYER M3 ;
         RECT 0.423 0.094 0.441 0.446 ;
     END
@@ -88,6 +81,14 @@ MACRO DCL_NMOS_n12_X2_Y1
     END
   END BG
   OBS
+    LAYER M2 ;
+      RECT 0.094 0.261 0.824 0.279 ;
+    LAYER M2 ;
+      RECT 0.040 0.099 0.716 0.117 ;
+    LAYER M2 ;
+      RECT 0.040 0.153 0.716 0.171 ;
+    LAYER M2 ;
+      RECT 0.040 0.207 0.716 0.225 ;
     LAYER M1 ;
       RECT 0.099 0.040 0.117 0.500 ;
     LAYER M1 ;
@@ -124,12 +125,6 @@ MACRO DCL_PMOS_n12_X5_Y1
     DIRECTION INOUT ;
     USE SIGNAL ;
     PORT
-      LAYER M2 ;
-        RECT 0.040 0.099 2.012 0.117 ;
-      LAYER M2 ;
-        RECT 0.040 0.153 2.012 0.171 ;
-      LAYER M2 ;
-        RECT 0.040 0.207 2.012 0.225 ;
       LAYER M3 ;
         RECT 1.017 0.094 1.035 0.446 ;
     END
@@ -138,8 +133,6 @@ MACRO DCL_PMOS_n12_X5_Y1
     DIRECTION INOUT ;
     USE SIGNAL ;
     PORT
-      LAYER M2 ;
-        RECT 0.094 0.261 2.120 0.279 ;
       LAYER M3 ;
         RECT 1.071 0.094 1.089 0.446 ;
     END
@@ -153,6 +146,14 @@ MACRO DCL_PMOS_n12_X5_Y1
     END
   END BG
   OBS
+    LAYER M2 ;
+      RECT 0.094 0.261 2.120 0.279 ;
+    LAYER M2 ;
+      RECT 0.040 0.099 2.012 0.117 ;
+    LAYER M2 ;
+      RECT 0.040 0.153 2.012 0.171 ;
+    LAYER M2 ;
+      RECT 0.040 0.207 2.012 0.225 ;
     LAYER M1 ;
       RECT 0.099 0.040 0.117 0.500 ;
     LAYER M1 ;
@@ -225,12 +226,6 @@ MACRO Switch_NMOS_n12_X1_Y1
     DIRECTION INOUT ;
     USE SIGNAL ;
     PORT
-      LAYER M2 ;
-        RECT 0.040 0.099 0.284 0.117 ;
-      LAYER M2 ;
-        RECT 0.040 0.153 0.284 0.171 ;
-      LAYER M2 ;
-        RECT 0.040 0.207 0.284 0.225 ;
       LAYER M3 ;
         RECT 0.153 0.094 0.171 0.446 ;
     END
@@ -239,8 +234,6 @@ MACRO Switch_NMOS_n12_X1_Y1
     DIRECTION INOUT ;
     USE SIGNAL ;
     PORT
-      LAYER M2 ;
-        RECT 0.148 0.261 0.392 0.279 ;
       LAYER M3 ;
         RECT 0.207 0.094 0.225 0.446 ;
     END
@@ -249,8 +242,6 @@ MACRO Switch_NMOS_n12_X1_Y1
     DIRECTION INOUT ;
     USE SIGNAL ;
     PORT
-      LAYER M2 ;
-        RECT 0.094 0.315 0.338 0.333 ;
       LAYER M3 ;
         RECT 0.099 0.094 0.117 0.446 ;
     END
@@ -264,6 +255,16 @@ MACRO Switch_NMOS_n12_X1_Y1
     END
   END BG
   OBS
+    LAYER M2 ;
+      RECT 0.094 0.315 0.338 0.333 ;
+    LAYER M2 ;
+      RECT 0.148 0.261 0.392 0.279 ;
+    LAYER M2 ;
+      RECT 0.040 0.099 0.284 0.117 ;
+    LAYER M2 ;
+      RECT 0.040 0.153 0.284 0.171 ;
+    LAYER M2 ;
+      RECT 0.040 0.207 0.284 0.225 ;
     LAYER M1 ;
       RECT 0.099 0.040 0.117 0.500 ;
     LAYER M1 ;
@@ -288,12 +289,6 @@ MACRO Switch_NMOS_n12_X2_Y1
     DIRECTION INOUT ;
     USE SIGNAL ;
     PORT
-      LAYER M2 ;
-        RECT 0.040 0.099 0.716 0.117 ;
-      LAYER M2 ;
-        RECT 0.040 0.153 0.716 0.171 ;
-      LAYER M2 ;
-        RECT 0.040 0.207 0.716 0.225 ;
       LAYER M3 ;
         RECT 0.369 0.094 0.387 0.446 ;
     END
@@ -302,8 +297,6 @@ MACRO Switch_NMOS_n12_X2_Y1
     DIRECTION INOUT ;
     USE SIGNAL ;
     PORT
-      LAYER M2 ;
-        RECT 0.148 0.261 0.824 0.279 ;
       LAYER M3 ;
         RECT 0.423 0.094 0.441 0.446 ;
     END
@@ -312,8 +305,6 @@ MACRO Switch_NMOS_n12_X2_Y1
     DIRECTION INOUT ;
     USE SIGNAL ;
     PORT
-      LAYER M2 ;
-        RECT 0.094 0.315 0.770 0.333 ;
       LAYER M3 ;
         RECT 0.315 0.094 0.333 0.446 ;
     END
@@ -327,6 +318,16 @@ MACRO Switch_NMOS_n12_X2_Y1
     END
   END BG
   OBS
+    LAYER M2 ;
+      RECT 0.094 0.315 0.770 0.333 ;
+    LAYER M2 ;
+      RECT 0.148 0.261 0.824 0.279 ;
+    LAYER M2 ;
+      RECT 0.040 0.099 0.716 0.117 ;
+    LAYER M2 ;
+      RECT 0.040 0.153 0.716 0.171 ;
+    LAYER M2 ;
+      RECT 0.040 0.207 0.716 0.225 ;
     LAYER M1 ;
       RECT 0.099 0.040 0.117 0.500 ;
     LAYER M1 ;
@@ -363,18 +364,6 @@ MACRO Switch_PMOS_n12_X5_Y2
     DIRECTION INOUT ;
     USE SIGNAL ;
     PORT
-      LAYER M2 ;
-        RECT 0.040 0.099 2.012 0.117 ;
-      LAYER M2 ;
-        RECT 0.040 0.153 2.012 0.171 ;
-      LAYER M2 ;
-        RECT 0.040 0.207 2.012 0.225 ;
-      LAYER M2 ;
-        RECT 0.040 0.639 2.012 0.657 ;
-      LAYER M2 ;
-        RECT 0.040 0.693 2.012 0.711 ;
-      LAYER M2 ;
-        RECT 0.040 0.747 2.012 0.765 ;
       LAYER M3 ;
         RECT 1.017 0.094 1.035 0.770 ;
     END
@@ -383,10 +372,6 @@ MACRO Switch_PMOS_n12_X5_Y2
     DIRECTION INOUT ;
     USE SIGNAL ;
     PORT
-      LAYER M2 ;
-        RECT 0.148 0.261 2.120 0.279 ;
-      LAYER M2 ;
-        RECT 0.148 0.801 2.120 0.819 ;
       LAYER M3 ;
         RECT 1.071 0.256 1.089 0.824 ;
     END
@@ -395,10 +380,6 @@ MACRO Switch_PMOS_n12_X5_Y2
     DIRECTION INOUT ;
     USE SIGNAL ;
     PORT
-      LAYER M2 ;
-        RECT 0.094 0.315 2.066 0.333 ;
-      LAYER M2 ;
-        RECT 0.094 0.855 2.066 0.873 ;
       LAYER M3 ;
         RECT 0.963 0.310 0.981 0.878 ;
     END
@@ -412,6 +393,26 @@ MACRO Switch_PMOS_n12_X5_Y2
     END
   END BG
   OBS
+    LAYER M2 ;
+      RECT 0.094 0.315 2.066 0.333 ;
+    LAYER M2 ;
+      RECT 0.094 0.855 2.066 0.873 ;
+    LAYER M2 ;
+      RECT 0.148 0.261 2.120 0.279 ;
+    LAYER M2 ;
+      RECT 0.148 0.801 2.120 0.819 ;
+    LAYER M2 ;
+      RECT 0.040 0.099 2.012 0.117 ;
+    LAYER M2 ;
+      RECT 0.040 0.153 2.012 0.171 ;
+    LAYER M2 ;
+      RECT 0.040 0.207 2.012 0.225 ;
+    LAYER M2 ;
+      RECT 0.040 0.639 2.012 0.657 ;
+    LAYER M2 ;
+      RECT 0.040 0.693 2.012 0.711 ;
+    LAYER M2 ;
+      RECT 0.040 0.747 2.012 0.765 ;
     LAYER M1 ;
       RECT 0.099 0.040 0.117 0.500 ;
     LAYER M1 ;
