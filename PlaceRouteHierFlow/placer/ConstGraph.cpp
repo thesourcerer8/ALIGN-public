@@ -6412,7 +6412,7 @@ void ConstGraph::WriteOut_Features(){
 void ConstGraph::WriteOut_Features_new(){
 
   ofstream fout;
-  std::string outfile = "Feature_value_new";
+  std::string outfile = "Feature_value";
   fout.open(outfile.c_str());
 
   for(int i=0;i<Features_point.size();i++){
