@@ -1,4 +1,5 @@
 #include "Placer.h"
+//#include <time.h>
 #define NUM_THREADS 8
 
 Placer::Placer(PnRDB::hierNode& node, string opath, int effort, PnRDB::Drc_info& drcInfo) {
@@ -12,11 +13,13 @@ Placer::Placer(PnRDB::hierNode& node, string opath, int effort, PnRDB::Drc_info&
   PlacementRegular(node, opath, effort, drcInfo);
 }
 
-Placer::Placer(std::vector<PnRDB::hierNode>& nodeVec, string opath, int effort, PnRDB::Drc_info& drcInfo, int gain_weight, int ugf_weight, int pm_weight, int threedb_weight) {
+Placer::Placer(std::vector<PnRDB::hierNode>& nodeVec, string opath, int effort, PnRDB::Drc_info& drcInfo, int gain_weight, int ugf_weight, int pm_weight, int threedb_weight, int wire_weight, int area_weight) {
   this->gain_weight = gain_weight;
   this->ugf_weight = ugf_weight;
   this->pm_weight = pm_weight;
-  this->threedb_weight = threedb_weight;  
+  this->threedb_weight = threedb_weight;
+  this->wire_weight = wire_weight;
+  this->area_weight = area_weight;  
   PlacementRegularAspectRatio(nodeVec, opath, effort, drcInfo);
   //PlacementMixSAAspectRatio(nodeVec, opath, effort);
   //PlacementMixAPAspectRatio(nodeVec, opath, effort);
@@ -364,13 +367,17 @@ void Placer::PlacementCore(design& designData, SeqPair& curr_sp, ConstGraph& cur
 std::map<double, SeqPair> Placer::PlacementCoreAspectRatio(design& designData, SeqPair& curr_sp, ConstGraph& curr_sol, int mode, int nodeSize, int effort) {
 // Mode 0: graph bias; Mode 1: graph bias + net margin; Others: no bias/margin
   //cout<<"PlacementCore\n";
+  srand( time(0) );
   std::map<double, SeqPair> oData;
   curr_sp.PrintSeqPair();
   GenerateValidSolution(designData, curr_sp, curr_sol, mode);
   //curr_sol.PrintConstGraph();
   //double curr_cost=curr_sol.CalculateCost(designData, curr_sp);
   //double curr_cost=curr_sol.PerformanceDriven_CalculateCost(designData, curr_sp, gain_weight, ugf_weight, pm_weight, threedb_weight);
-  double curr_cost=curr_sol.Other_PerformanceDriven_CalculateCost(designData, curr_sp, gain_weight, ugf_weight, pm_weight, threedb_weight);
+  //double curr_cost=curr_sol.Other_PerformanceDriven_CalculateCost(designData, curr_sp, gain_weight, ugf_weight, pm_weight, threedb_weight,max_wire_length,max_area,wire_weight,area_weight);
+  double curr_cost=curr_sol.Random_Cost(designData, curr_sp);
+  max_wire_length = curr_sol.Max_wire_length;
+  max_area = curr_sol.Max_area;
   cout<<"Placer-Info: initial cost = "<<curr_cost<<endl;
 
   cout<<"Placer-Info: status ";cout.flush();
@@ -450,7 +457,10 @@ std::map<double, SeqPair> Placer::PlacementCoreAspectRatio(design& designData, S
       if(GenerateValidSolution(designData, trial_sp, trial_sol, mode)) {
         //double trial_cost=trial_sol.CalculateCost(designData, trial_sp);
         //double trial_cost=trial_sol.PerformanceDriven_CalculateCost(designData, trial_sp, gain_weight, ugf_weight, pm_weight, threedb_weight);
-        double trial_cost=trial_sol.Other_PerformanceDriven_CalculateCost(designData, trial_sp, gain_weight, ugf_weight, pm_weight, threedb_weight);
+        //double trial_cost=trial_sol.Other_PerformanceDriven_CalculateCost(designData, trial_sp, gain_weight, ugf_weight, pm_weight, threedb_weight, max_wire_length, max_area,wire_weight,area_weight);
+        double trial_cost=curr_sol.Random_Cost(designData, trial_sp);
+        max_wire_length = trial_sol.Max_wire_length;
+        max_area = trial_sol.Max_area;
         bool Smark=false;
         delta_cost=trial_cost-curr_cost;
         if(delta_cost<0) {Smark=true;
@@ -480,7 +490,10 @@ std::map<double, SeqPair> Placer::PlacementCoreAspectRatio(design& designData, S
         curr_sol.Update_parameters(designData, curr_sp);
         //curr_cost = curr_sol.CalculateCost(designData, curr_sp);
         //curr_cost = curr_sol.PerformanceDriven_CalculateCost(designData, curr_sp, gain_weight, ugf_weight, pm_weight, threedb_weight);
-        curr_cost = curr_sol.Other_PerformanceDriven_CalculateCost(designData, curr_sp, gain_weight, ugf_weight, pm_weight, threedb_weight);
+        //curr_cost = curr_sol.Other_PerformanceDriven_CalculateCost(designData, curr_sp, gain_weight, ugf_weight, pm_weight, threedb_weight, max_wire_length, max_area,wire_weight,area_weight);
+        curr_cost=curr_sol.Random_Cost(designData, curr_sp);
+        max_wire_length = curr_sol.Max_wire_length;
+        max_area = curr_sol.Max_area;
         std::cout<<"updated cost: "<<curr_cost<<std::endl;
         oData[curr_cost]=curr_sp;
         ReshapeSeqPairMap(oData, nodeSize);
@@ -498,6 +511,7 @@ std::map<double, SeqPair> Placer::PlacementCoreAspectRatio(design& designData, S
   cout<<endl<<"Placer-Info: optimal cost = "<<curr_cost<<endl;
   //curr_sol.PrintConstGraph();
   curr_sol.WriteOut_Features();
+  curr_sol.WriteOut_Features_new();
   curr_sp.PrintSeqPair();
   //curr_sol.updateTerminalCenter(designData, curr_sp);
   return oData;

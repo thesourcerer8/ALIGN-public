@@ -38,6 +38,10 @@ class Placer {
     int ugf_weight;
     int pm_weight;
     int threedb_weight;
+    int wire_weight;
+    int area_weight;
+    double max_wire_length = -1;
+    double max_area = -1;
     bool GenerateValidSolution(design& mydesign, SeqPair& curr_sp, ConstGraph& curr_sol, int mode);
     void PlacementRegular(PnRDB::hierNode& node, string opath, int effort, PnRDB::Drc_info& drcInfo); // do placement with simulated annealing 
     void PlacementMixSA(PnRDB::hierNode& node, string opath, int effort, PnRDB::Drc_info& drcInfo); // do placement with mix-sized simulated annealing
@@ -52,7 +56,7 @@ class Placer {
 
   public:
     Placer(PnRDB::hierNode& node, string opath, int effort, PnRDB::Drc_info& drcInfo);
-    Placer(std::vector<PnRDB::hierNode>& nodeVec, string opath, int effort, PnRDB::Drc_info& drcInfo, int gain_weight, int ugf_weight, int pm_weight ,int threedb_weight);
+    Placer(std::vector<PnRDB::hierNode>& nodeVec, string opath, int effort, PnRDB::Drc_info& drcInfo, int gain_weight, int ugf_weight, int pm_weight ,int threedb_weight, int wire_weight, int area_weight);
     //Placer(PnRDB::hierNode& input_node); // Constructor
     //PnRDB::hierNode CheckoutHierNode(); // Output hier Node after placement
 };

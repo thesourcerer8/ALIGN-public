@@ -1,4 +1,6 @@
-file_name=cascode_current_mirror_ota
+file_name=ota_asap7
+#file_name=cascode_current_mirror_ota
+#file_name=current_mirror_ota
 
 lef=.lef
 v=.v
@@ -28,22 +30,28 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/yaguang/Desktop/Research/src/tenso
 
 index=0
 
-for i in $(seq 0 10 60)
+
+
+for i in $(seq 0 1 2)
 do
-  for j in $(seq 0 10 60)
+  for j in $(seq 0 1 2)
   do
-    for q in $(seq 0 10 60)
+    for q in $(seq 0 1 2)
     do
-      for p in $(seq 0 10 60)
+      for p in $(seq 0 1 2)
       do
-
-       index=$((index+1))
-       mkdir $gds_folder$slash$index
-       PNRDB_disable_io=1 ./pnr_compiler ./$file_name $lef_file $v_file $map_file layers.json $file_name 1 0 $i $j $q $p | tee log && python json2gds.py $source_folder$slash$source_file $target_file && cp $target_file $gds_folder$slash$index$slash$target_file && cp $Feature_value_file $gds_folder$slash$index$slash$Feature_value_file && rm $Feature_value_file && rm -r $source_folder
-
-      done
-    done
-  done  
+        for k in $(seq 0 1 2)
+        do
+         for l in $(seq 0 1 2)
+         do
+         index=$((index+1))
+         mkdir $gds_folder$slash$index
+         PNRDB_disable_io=1 ./pnr_compiler ./$file_name $lef_file $v_file $map_file layers.json $file_name 1 0 $i $j $q $p $k $l | tee log && python json2gds.py $source_folder$slash$source_file $target_file && cp $target_file $gds_folder$slash$index$slash$target_file && cp $Feature_value_file $gds_folder$slash$index$slash$Feature_value_file && rm $Feature_value_file && rm -r $source_folder
+         done
+       done
+     done
+   done
+ done  
 done
 
 

@@ -1476,8 +1476,6 @@ PnRDB::point design::GetPlacedPnRPosition(PnRDB::point oldp, int width, int heig
   return p;
 }
 
-
-
 vector<placerDB::point> design::GetPlacedBlockPinRelPosition(int blockid, int pinid, placerDB::Omark ort, int sel) {
   vector<placerDB::point> newCenter;
   for(vector<placerDB::point>::iterator it=Blocks.at(blockid).at(sel).blockPins.at(pinid).center.begin();it!=Blocks.at(blockid).at(sel).blockPins.at(pinid).center.end();++it) {
@@ -1522,8 +1520,10 @@ vector<placerDB::point> design::GetPlacedBlockAbsBoundary(int blockid, placerDB:
 vector<vector<placerDB::point> > design::GetPlacedBlockPinRelBoundary(int blockid, int pinid, placerDB::Omark ort, int sel) {
   vector<vector<placerDB::point> > newp;
   for(vector<placerDB::bbox>::iterator it=Blocks.at(blockid).at(sel).blockPins.at(pinid).boundary.begin(); it!=Blocks.at(blockid).at(sel).blockPins.at(pinid).boundary.end(); ++it) {
+    std::cout<<"boundry size "<<Blocks.at(blockid).at(sel).blockPins.at(pinid).boundary.size()<<std::endl;
     newp.resize(newp.size()+1);
     for(vector<placerDB::point>::iterator it2=it->polygon.begin();it2!=it->polygon.end();++it2) {
+      std::cout<<"polygon size "<<it->polygon.size()<<std::endl;
       newp.back().push_back( GetPlacedPosition(*it2, Blocks.at(blockid).at(sel).width, Blocks.at(blockid).at(sel).height, ort) );
     }
   }

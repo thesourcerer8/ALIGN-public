@@ -6,6 +6,7 @@
 #include <vector>
 #include <stack>
 #include <climits>
+#include <time.h>
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -109,6 +110,8 @@ class ConstGraph
     vector<Vertex> VGraph;
     vector<double> Predicted_performance;
     vector<double> Features;
+    vector<vector<placerDB::point> > Features_point;
+
 
     bool AddEdgeforVertex(int current, int next, int weight, vector<Vertex> &graph);
     //bool CheckOppositeEdge(int current, int next, vector<Vertex> &graph);
@@ -158,6 +161,8 @@ class ConstGraph
     void RemoveOverlapEdge(design& caseNL, Aplace& caseAP);
     bool RemoveEdgeforVertex(int current, int next, vector<Vertex> &graph, bool isBackward);
   public:
+    double Max_wire_length;
+    double Max_area;
     static double LAMBDA;
     static double GAMAR;
     static double BETA;
@@ -205,9 +210,12 @@ class ConstGraph
     void Deep_learning_model_readin_feature_name(std::vector<std::vector<double> > &feature_A, std::vector<std::vector<double> > &feature_D,std::vector<std::string> &dp_feature_name, std::string feature_name_path);
     void Deep_learning_transform_feature(std::vector<double> &feature_value,std::vector<std::string> &feature_name,std::vector<std::string> &dp_feature_name);
     void Deep_learning_model_readin_device_feature(std::vector<double> &feature_value, std::string feature_name_path);
-    double Other_PerformanceDriven_CalculateCost(design& caseNL, SeqPair& caseSP, int gain_weight, int ugf_weight, int pm_weight, int threedb_weight);
+    double Other_PerformanceDriven_CalculateCost(design& caseNL, SeqPair& caseSP, int gain_weight, int ugf_weight, int pm_weight, int threedb_weight,double max_wire_length, double max_area, int wire_weight, int area_weight);
     double Call_Machine_learning_model(std::string model_path,const char* module_name, const char* func_name, std::vector<double> x_test);
     void WriteOut_Features();
+    void ExtractFeatures_New(design& caseNL, SeqPair& caseSP, std::vector<std::vector<double> > &feature_value, std::vector<std::string> &feature_name);
+    double Random_Cost(design& caseNL, SeqPair& caseSP);
+    void WriteOut_Features_new();
 
 };
 

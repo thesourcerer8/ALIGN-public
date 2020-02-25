@@ -2571,7 +2571,7 @@ void ConstGraph::Deep_learning_model_readin_device_feature(std::vector<double> &
   
 }
 
-double ConstGraph::Other_PerformanceDriven_CalculateCost(design& caseNL, SeqPair& caseSP, int gain_weight, int ugf_weight, int pm_weight, int threedb_weight){
+double ConstGraph::Other_PerformanceDriven_CalculateCost(design& caseNL, SeqPair& caseSP, int gain_weight, int ugf_weight, int pm_weight, int threedb_weight, double max_wire_length, double max_area, int wire_weight, int area_weight){
 
   std::vector<double> feature_value;
   std::vector<std::vector<double>> feature_A;
@@ -2580,22 +2580,22 @@ double ConstGraph::Other_PerformanceDriven_CalculateCost(design& caseNL, SeqPair
   std::vector<std::string> feature_name;
   std::vector<std::string> dp_feature_name;
 
-  std::string path = "/home/yaguang/Desktop/src/ALIGN-public/PlaceRouteHierFlow/Performance_Prediction/";
+  std::string path = "/home/yaguang/Desktop/Research/Performance_Driven/branch/online_models/ALIGN-public-svm-5t/PlaceRouteHierFlow/Performance_Prediction/";
   std::string circuit = "five_transistor_ota";
   //std::string circuit = "current_mirror_ota";
   //std::string circuit = "cascode_current_mirror_ota";
 
-  //std::string model_name = "gcn";
-  //std::string model_name = "linear";
-  std::string model_name = "random";
+  std::string model_name = "NN";
+  //std::string model_name = "random";
+  //std::string model_name = "svm";
 
   
-  std::string gain_model_path = path+circuit+"/"+model_name+"/RandomForest_gain.m";
-  std::string ugf_model_path = path+circuit+"/"+model_name+"/RandomForest_ugf.m"; 
-  std::string pm_model_path = path+circuit+"/"+model_name+"/RandomForest_pm.m"; 
-  std::string threedb_model_path = path+circuit+"/"+model_name+"/RandomForest_threedb.m";  
-  std::string feature_name_path = path+circuit+"/"+model_name+"/Feature_name"; 
-  std::string device_feature_path = path+circuit+"/"+model_name+"/Device_feature";
+  std::string gain_model_path = path+circuit+"/models/"+model_name+"/Linear_gain.m";
+  std::string ugf_model_path = path+circuit+"/models/"+model_name+"/Linear_ugf.m"; 
+  std::string pm_model_path = path+circuit+"/models/"+model_name+"/Linear_pm.m"; 
+  std::string threedb_model_path = path+circuit+"/models/"+model_name+"/Linear_3db.m";  
+  std::string feature_name_path = path+circuit+"/models/"+model_name+"/Feature_name"; 
+  std::string device_feature_path = path+circuit+"/models/"+model_name+"/Device_feature";
 
   ExtractFeatures(caseNL, caseSP, feature_value, feature_name);
   Deep_learning_model_readin_feature_name(feature_A,feature_D,dp_feature_name,feature_name_path);
@@ -2618,7 +2618,8 @@ double ConstGraph::Other_PerformanceDriven_CalculateCost(design& caseNL, SeqPair
   double expected_pm = 88.95; //91 88.95
   double expected_threedb = 38270000; //50000000 38270000
 
-  double cost = gain_weight*abs(expected_gain-predicted_gain)/expected_gain + ugf_weight*abs(expected_ugf-predicted_ugf)/expected_ugf + pm_weight*abs(expected_pm-predicted_pm)/expected_pm + threedb_weight*abs(expected_threedb-predicted_threedb)/expected_threedb;
+  //double cost = gain_weight*abs(expected_gain-predicted_gain)/expected_gain + ugf_weight*abs(expected_ugf-predicted_ugf)/expected_ugf + pm_weight*abs(expected_pm-predicted_pm)/expected_pm + threedb_weight*abs(expected_threedb-predicted_threedb)/expected_threedb;
+  double cost = gain_weight*predicted_gain + ugf_weight*predicted_ugf + pm_weight*predicted_pm + threedb_weight*predicted_threedb;
   //cost = cost + predicted_gain*gain_weight;
 
   this->Features = feature_value;
@@ -2627,6 +2628,32 @@ double ConstGraph::Other_PerformanceDriven_CalculateCost(design& caseNL, SeqPair
   Predicted_performance.push_back(predicted_ugf);
   Predicted_performance.push_back(predicted_pm);
   Predicted_performance.push_back(predicted_threedb);
+
+  CalculateLongestPath(sourceNode, this->HGraph, false);
+  CalculateLongestPath(sourceNode, this->VGraph, false);
+  //cost += (CalculatePenalty(this->HGraph)+CalculatePenalty(this->VGraph))*GAMAR;
+  double wirelength = CalculateWireLength(caseNL, caseSP)/2000;
+  double Area = CalculateArea()/(2000*2000);
+  if(wirelength>max_wire_length){max_wire_length=wirelength;}
+  if(Area>max_area){max_area=Area;}
+  Max_wire_length = max_wire_length;
+  Max_area = max_area;
+  //wirelength = wirelength / 2000;
+  //Area = Area / (2000*2000);
+
+  cost += wire_weight*wirelength/Max_wire_length;
+  //cost += CalculateMatchCost(caseNL, caseSP)*BETA;
+  //cost += CalculateRatio()*SIGMA;
+  cost += area_weight*Area/Max_area;
+  //cost += CalculateDeadArea(caseNL, caseSP)*PHI;
+  Features.push_back(wirelength);
+  Features.push_back(Area);
+
+
+  Features.push_back(predicted_gain);
+  Features.push_back(predicted_ugf);
+  Features.push_back(predicted_pm);
+  Features.push_back(predicted_threedb);
 
   std::cout<<"deep learning cost "<<cost<<std::endl;
   return cost;  
@@ -2648,8 +2675,11 @@ double ConstGraph::Call_Machine_learning_model(std::string model_path,const char
   //const char* func_name = "multiply_list";
   std::cout<<"other machin learning model step 2"<<std::endl;
   //this->import
-  PyRun_SimpleString("from sklearn import linear"); 
-  PyRun_SimpleString("from sklearn import svm");
+  //PyRun_SimpleString("from sklearn import linear");
+  PyRun_SimpleString("from sklearn.neural_network import MLPClassifier");
+  //PyRun_SimpleString("from sklearn.svm import SVR");
+  //PyRun_SimpleString("from sklearn import svm");
+  PyRun_SimpleString("from sklearn.svm import SVR");
   PyRun_SimpleString("from sklearn.ensemble import RandomForestRegressor");
   PyRun_SimpleString("import numpy as np");
   PyRun_SimpleString("from sklearn.externals import joblib");
@@ -2657,7 +2687,7 @@ double ConstGraph::Call_Machine_learning_model(std::string model_path,const char
   PyRun_SimpleString("from sklearn.metrics import mean_squared_error, r2_score");
   PyRun_SimpleString("import sys");
   PyRun_SimpleString("sys.path.append('./')");
-  PyRun_SimpleString("sys.path.append('/home/yaguang/Desktop/src/ALIGN-public/PlaceRouteHierFlow/placer')");
+  PyRun_SimpleString("sys.path.append('/home/yaguang/Desktop/Research/Performance_Driven/branch/online_models/ALIGN-public-svm-5t/PlaceRouteHierFlow/placer')");
   std::cout<<"other machin learning model step 3"<<std::endl;
   pModule = PyImport_ImportModule(module_name);
   std::cout<<"pModule "<<pModule<<std::endl;
@@ -2722,9 +2752,9 @@ double ConstGraph::PerformanceDriven_CalculateCost(design& caseNL, SeqPair& case
 
   std::string model_input_node_name = "feature";
   std::string model_output_node_name = "lable/BiasAdd";
-  std::string path = "/home/yaguang/Desktop/src/ALIGN-public/PlaceRouteHierFlow/Performance_Prediction/";
-  std::string circuit = "five_transistor_ota";
-  //std::string circuit = "current_mirror_ota";
+  std::string path = "/home/yaguang/Desktop/Research/Performance_Driven/branch/ALIGN-public/PlaceRouteHierFlow/Performance_Prediction/";
+  //std::string circuit = "five_transistor_ota";
+  std::string circuit = "current_mirror_ota";
   //std::string circuit = "cascode_current_mirror_ota";
 
   std::string model_name = "gcn";
@@ -2785,12 +2815,120 @@ double ConstGraph::PerformanceDriven_CalculateCost(design& caseNL, SeqPair& case
   return cost;
 }
 
+
+void ConstGraph::ExtractFeatures_New(design& caseNL, SeqPair& caseSP, std::vector<std::vector<double> > &feature_value, std::vector<std::string> &feature_name){
+
+  vector<placerDB::point> pos; placerDB::point p, bp;
+  vector<vector<placerDB::point> > pos_pin;
+  std::map<string, std::vector<placerDB::point> > pin_maps;
+  std::string pin_name;
+  Features_point.clear();
+
+  std::cout<<"Test step 1"<<std::endl;
+  // for each net
+  for(vector<placerDB::net>::iterator ni=caseNL.Nets.begin(); ni!=caseNL.Nets.end(); ++ni) {
+    // for each pin
+    int net_pin_number = 0;
+    for(vector<placerDB::Node>::iterator ci=(ni->connected).begin(); ci!=(ni->connected).end(); ++ci) {
+      pos.clear();
+      if(ci->type==placerDB::Block) {
+        //pin_name = ni->name + "_" + caseNL.Blocks[ci->iter2].back().name + std::to_string(net_pin_number);
+        pin_name = ni->name + "_" + caseNL.Blocks[ci->iter2].back().name;
+        net_pin_number = net_pin_number + 1;
+        //pos_pin =caseNL.GetPlacedBlockPinAbsPosition(ci->iter2, ci->iter, caseSP.GetBlockOrient(ci->iter2), bp, caseSP.GetBlockSelected(ci->iter2));
+        std::cout<<"test 1.1"<<std::endl;
+        pos_pin = caseNL.GetPlacedBlockPinRelBoundary(ci->iter2, ci->iter, caseSP.GetBlockOrient(ci->iter2), caseSP.GetBlockSelected(ci->iter2));
+        std::cout<<"test 1.2"<<std::endl;
+        //std::cout<<"Print Pin Contact Info"<<std::endl;
+        for(unsigned int i=0;i<pos_pin.size();i++){
+          for(unsigned int j=0;j<pos_pin[i].size();j++){
+            p = pos_pin[i][j];
+            //std::cout<<"Pin Center (x, y)"<<p.x<<" "<<p.y<<std::endl;
+            pos.push_back(p);
+          }
+	}
+        std::cout<<"test 1.3"<<std::endl;
+        pin_maps.insert(map<string, std::vector<placerDB::point> >::value_type (pin_name, pos));
+        std::cout<<"test 1.4"<<std::endl;        
+      }
+    }
+  }
+  std::cout<<"Test step 2"<<std::endl;
+  updateTerminalCenter(caseNL, caseSP);
+
+    // for each net
+  for(vector<placerDB::net>::iterator ni=caseNL.Nets.begin(); ni!=caseNL.Nets.end(); ++ni) {
+    // for each terminal
+    for(vector<placerDB::Node>::iterator ci=(ni->connected).begin(); ci!=(ni->connected).end(); ++ci) {
+      pos.clear();
+      if(ci->type==placerDB::Terminal) {
+        pin_name = ni->name;
+        std::cout<<"Terminal center (x,y) "<<caseNL.Terminals[ci->iter].center.x<<" "<<caseNL.Terminals[ci->iter].center.y<<std::endl;
+        pos.push_back(caseNL.Terminals[ci->iter].center);
+        pin_maps.insert(map<string, std::vector<placerDB::point> >::value_type (pin_name, pos));
+      }
+    }
+  }
+  std::cout<<"Test step 3"<<std::endl;
+  std::vector<std::vector<placerDB::point> > center_points_all;
+  //extract pin_name, feature_value
+  for(vector<placerDB::net>::iterator ni=caseNL.Nets.begin(); ni!=caseNL.Nets.end(); ++ni) {
+    // for each pin
+    string net_name = ni->name;
+    int net_pin_number = 0;
+    std::vector<std::vector<placerDB::point> > center_points;
+    for(vector<placerDB::Node>::iterator ci=(ni->connected).begin(); ci!=(ni->connected).end(); ++ci) {
+      if(ci->type==placerDB::Block) {
+        //pin_name = net_name + "_" + caseNL.Blocks[ci->iter2].back().name+"_"+std::to_string(net_pin_number);
+        pin_name = net_name + "_" + caseNL.Blocks[ci->iter2].back().name;
+        net_pin_number = net_pin_number + 1;
+        feature_name.push_back(pin_name);
+        std::cout<<"Sorted Pin name "<<pin_name<<" pin contact size "<<pin_maps[pin_name].size()<<std::endl;
+        center_points.push_back(pin_maps[pin_name]);
+        center_points_all.push_back(pin_maps[pin_name]);
+      }else if(ci->type==placerDB::Terminal) {
+        feature_name.push_back(net_name);
+        std::cout<<"Sorted terminal name "<<net_name<<" terminal contact size "<<pin_maps[net_name].size()<<std::endl;
+        center_points.push_back(pin_maps[net_name]);
+        center_points_all.push_back(pin_maps[net_name]);
+      }
+    }
+  std::cout<<"Test step 4"<<std::endl;
+
+
+/*
+    std::vector<double> temp_feature = Calculate_Center_Point_feature(center_points);
+    for(int i=0;i<temp_feature.size();i++){
+  
+       feature_value.push_back(temp_feature[i]);
+
+    }
+*/    
+  }
+
+  Features_point = center_points_all;
+
+
+}
+
+double ConstGraph::Random_Cost(design& caseNL, SeqPair& caseSP){
+
+  std::vector<std::vector<double> > feature_value;
+  std::vector<std::string> feature_name;
+  ExtractFeatures_New(caseNL, caseSP, feature_value, feature_name);
+  srand(time(0));
+  double cost = rand() % 10;
+  return cost;
+
+}
+
 void ConstGraph::ExtractFeatures(design& caseNL, SeqPair& caseSP, std::vector<double> &feature_value, std::vector<std::string> &feature_name){
 
   vector<placerDB::point> pos; placerDB::point p, bp;
   vector<placerDB::point> pos_pin;
   std::map<string, std::vector<placerDB::point> > pin_maps;
   std::string pin_name;
+
 
   // for each net
   for(vector<placerDB::net>::iterator ni=caseNL.Nets.begin(); ni!=caseNL.Nets.end(); ++ni) {
@@ -2832,6 +2970,7 @@ void ConstGraph::ExtractFeatures(design& caseNL, SeqPair& caseSP, std::vector<do
     }
   }
 
+
   std::vector<std::vector<placerDB::point> > center_points_all;
   //extract pin_name, feature_value
   for(vector<placerDB::net>::iterator ni=caseNL.Nets.begin(); ni!=caseNL.Nets.end(); ++ni) {
@@ -2856,6 +2995,7 @@ void ConstGraph::ExtractFeatures(design& caseNL, SeqPair& caseSP, std::vector<do
       }
     }
 
+
     std::vector<double> temp_feature = Calculate_Center_Point_feature(center_points);
     for(int i=0;i<temp_feature.size();i++){
   
@@ -2864,6 +3004,7 @@ void ConstGraph::ExtractFeatures(design& caseNL, SeqPair& caseSP, std::vector<do
     }
     
   }
+
 
 
 }
@@ -3031,6 +3172,7 @@ double ConstGraph::CalculateCost(design& caseNL, SeqPair& caseSP) {
   CalculateLongestPath(sourceNode, this->VGraph, false);
   cost += (CalculatePenalty(this->HGraph)+CalculatePenalty(this->VGraph))*GAMAR;
   cost += CalculateWireLength(caseNL, caseSP)*LAMBDA;
+  std::cout<<"Final HPWL "<<CalculateWireLength(caseNL, caseSP)/2000<<std::endl;
   cost += CalculateMatchCost(caseNL, caseSP)*BETA;
   cost += CalculateRatio()*SIGMA;
   cost += CalculateArea();
@@ -6263,6 +6405,22 @@ void ConstGraph::WriteOut_Features(){
      fout<<Features[i]<<" ";
   }
   fout<<std::endl;
+  fout.close();
+    
+}
+
+void ConstGraph::WriteOut_Features_new(){
+
+  ofstream fout;
+  std::string outfile = "Feature_value_new";
+  fout.open(outfile.c_str());
+
+  for(int i=0;i<Features_point.size();i++){
+     for(int j=0;j<Features_point[i].size();j++){
+        fout<<Features_point[i][j].x<<" "<<Features_point[i][j].y<<" ";
+     }
+     fout<<std::endl;
+  }
   fout.close();
     
 }
