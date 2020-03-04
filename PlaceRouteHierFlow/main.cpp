@@ -193,7 +193,7 @@ int main(int argc, char** argv ){
   int pm_weight = std::stoi(argv[11]);
   int threedb_weight = std::stoi(argv[12]);
   int wire_weight = std::stoi(argv[13]);
-  int area_weight = std::stoi(argv[14]);
+  int area_weight = std::stoi(argv[14]); //0.1 is fine
 
   // Following codes try to get the path of binary codes
   string binary_directory = argv[0];
