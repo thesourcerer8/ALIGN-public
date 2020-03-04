@@ -216,6 +216,7 @@ class ConstGraph
     void ExtractFeatures_New(design& caseNL, SeqPair& caseSP, std::vector<std::vector<double> > &feature_value, std::vector<std::string> &feature_name);
     double Random_Cost(design& caseNL, SeqPair& caseSP);
     void WriteOut_Features_new();
+    std::vector<double> return_cost();
 
 };
 

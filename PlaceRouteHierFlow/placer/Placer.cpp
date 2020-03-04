@@ -364,6 +364,12 @@ void Placer::PlacementCore(design& designData, SeqPair& curr_sp, ConstGraph& cur
   curr_sol.updateTerminalCenter(designData, curr_sp);
 }
 
+std::vector<double> Placer::return_current_cost(){
+
+  return Performance_Cost;
+
+}
+
 std::map<double, SeqPair> Placer::PlacementCoreAspectRatio(design& designData, SeqPair& curr_sp, ConstGraph& curr_sol, int mode, int nodeSize, int effort) {
 // Mode 0: graph bias; Mode 1: graph bias + net margin; Others: no bias/margin
   //cout<<"PlacementCore\n";
@@ -512,6 +518,7 @@ std::map<double, SeqPair> Placer::PlacementCoreAspectRatio(design& designData, S
   //curr_sol.PrintConstGraph();
   //curr_sol.WriteOut_Features();
   curr_sol.WriteOut_Features_new();
+  //Performance_Cost = curr_sol.return_cost();
   curr_sp.PrintSeqPair();
   //curr_sol.updateTerminalCenter(designData, curr_sp);
   return oData;

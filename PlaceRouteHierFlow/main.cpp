@@ -186,14 +186,9 @@ int main(int argc, char** argv ){
   if(opath.back()!='/') {opath+="/";}
 
   clock_t startTime,endTime;
-	
 
-  int gain_weight = std::stoi(argv[9]);
-  int ugf_weight = std::stoi(argv[10]);
-  int pm_weight = std::stoi(argv[11]);
-  int threedb_weight = std::stoi(argv[12]);
-  int wire_weight = std::stoi(argv[13]);
-  int area_weight = std::stoi(argv[14]); //0.1 is fine
+  double P = std::stod(argv[9]);
+  double th = std::stod(argv[10]);
 
   // Following codes try to get the path of binary codes
   string binary_directory = argv[0];
@@ -234,6 +229,12 @@ int main(int argc, char** argv ){
     PnRDB::hierNode current_node=DB.CheckoutHierNode(idx);
     DB.PrintHierNode(current_node);
 
+    std::vector<double> Weights(6,0.1);
+    int max_number = 1;
+    vector<double> last_cost(6,0.0);
+    vector<double> current_cost(6,0.0);
+    vector<double> cum_cost(6,0.0);
+
     
     save_state( DB, current_node, -1, opath, ".pre_prc", "Placer_Router_Cap", skip_saving_state);
     DB.AddingPowerPins(current_node);
@@ -245,11 +246,45 @@ int main(int argc, char** argv ){
 
     save_state( DB, current_node, -1, opath, ".pre_pl", "Before Placement", skip_saving_state);
 
-    startTime = clock();
-    
-    // Placement
     std::vector<PnRDB::hierNode> nodeVec(numLayout, current_node);
-    Placer curr_plc(nodeVec, opath, effort, const_cast<PnRDB::Drc_info&>(drcInfo), gain_weight, ugf_weight, pm_weight, threedb_weight, wire_weight, area_weight ); // do placement and update data in current node
+
+    startTime = clock();
+
+    for(int placer_index = 0; placer_index< max_number;placer_index++){
+
+      //for(int layout_index = 0; layout_index<numLayout; layout_index++)
+      //nodeVec.push_back(current_node);
+
+      std::cout<<"start to placer"<<std::endl;
+      Placer curr_plc(nodeVec, opath, effort, const_cast<PnRDB::Drc_info&>(drcInfo), Weights[0], Weights[1], Weights[2], Weights[3], Weights[4], Weights[5] ); // do placement and update data in current node
+      std::cout<<"end placer"<<std::endl;
+
+      std::cout<<"end placer1"<<std::endl;
+
+      current_cost = curr_plc.return_current_cost();
+
+      int change = 0;
+      std::cout<<"end placer2"<<std::endl;
+
+/*
+      for(int weight_index=0;weight_index<Weights.size();weight_index++){
+
+          cum_cost[weight_index] = cum_cost[weight_index] + current_cost[weight_index];
+          if(weight_index < 4)
+          Weights[weight_index] = Weights[weight_index]+ std::max(P*(current_cost[weight_index]-th),0.0);
+          
+          if(std::max(P*(current_cost[weight_index]-th),0.0)!=0) change = 1;
+           
+
+      }
+*/
+      if(change==0) break;
+
+      std::cout<<"end placer3"<<std::endl;
+      last_cost = current_cost;
+      
+    }
+
 
     endTime = clock();
 

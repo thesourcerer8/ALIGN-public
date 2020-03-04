@@ -2732,6 +2732,27 @@ double ConstGraph::Call_Machine_learning_model(std::string model_path,const char
 
 }
 
+std::vector<double> ConstGraph::return_cost(){
+
+  std::vector<double> temp_vector;
+  for(int i=Features.size()-1;i>=Features.size()-6;i--){
+
+     temp_vector.push_back(Features[i]);
+
+  }
+
+  std::vector<double> output_vector;
+  for(int i=temp_vector.size()-1;i>=0;i--){
+
+     output_vector.push_back(temp_vector[i]);
+
+  }
+
+  return output_vector;
+
+
+}
+
 
 //a function used to calculated the Deep learning model based performance
 double ConstGraph::PerformanceDriven_CalculateCost(design& caseNL, SeqPair& caseSP, int gain_weight, int ugf_weight, int pm_weight, int threedb_weight){
