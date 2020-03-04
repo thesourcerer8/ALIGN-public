@@ -6,13 +6,10 @@ lef=.lef
 v=.v
 map=.map
 gds=_gds
-log_file=log
 source=_0.gds.json
-plt=_0.plt
 source_file=$file_name$source
 target=_0.gds
 target_file=$file_name$target
-plt_file=$file_name$plt
 slash=/
 
 source_folder=Results
@@ -35,14 +32,11 @@ index=0
 
 
 
-for p in $(seq 0 0.1 1)
+for i in $(seq 0 1 2000)
 do
-  for th in $(seq 0 0.1 1)
-  do
   index=$((index+1))
   mkdir $gds_folder$slash$index
-  ./pnr_compiler ./$file_name $lef_file $v_file $map_file layers.json $file_name 1 0 $p $th $p $th $p $th | tee log && python json2gds.py $source_folder$slash$source_file $target_file && cp $target_file $gds_folder$slash$index$slash$target_file && cp $source_folder$slash$plt_file $gds_folder$slash$index$slash$plt_file && cp $Feature_value_file $gds_folder$slash$index$slash$Feature_value_file && cp $log_file $gds_folder$slash$index$slash$log_file   && rm $Feature_value_file && rm -r $source_folder
-  done
+  PNRDB_disable_io=1 ./pnr_compiler ./$file_name $lef_file $v_file $map_file layers.json $file_name 1 0 1 1 1 1 1 1 | tee log && python json2gds.py $source_folder$slash$source_file $target_file && cp $target_file $gds_folder$slash$index$slash$target_file && cp $Feature_value_file $gds_folder$slash$index$slash$Feature_value_file && rm $Feature_value_file && rm -r $source_folder  
 done
 
 
