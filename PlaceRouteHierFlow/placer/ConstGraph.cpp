@@ -2580,7 +2580,7 @@ double ConstGraph::Other_PerformanceDriven_CalculateCost(design& caseNL, SeqPair
   std::vector<std::string> feature_name;
   std::vector<std::string> dp_feature_name;
 
-  std::string path = "/home/yaguang/Desktop/Research/Performance_Driven/branch/online_models/ALIGN-public-svm-5t/PlaceRouteHierFlow/Performance_Prediction/";
+  std::string path = "/home/yaguang/Desktop/Research/Performance_Driven/branch/Random_Generation/ALIGN-public-5t/PlaceRouteHierFlow/Performance_Prediction/";
   std::string circuit = "five_transistor_ota";
   //std::string circuit = "current_mirror_ota";
   //std::string circuit = "cascode_current_mirror_ota";
@@ -2646,14 +2646,13 @@ double ConstGraph::Other_PerformanceDriven_CalculateCost(design& caseNL, SeqPair
   //cost += CalculateRatio()*SIGMA;
   cost += area_weight*Area/Max_area;
   //cost += CalculateDeadArea(caseNL, caseSP)*PHI;
-  Features.push_back(wirelength);
-  Features.push_back(Area);
-
 
   Features.push_back(predicted_gain);
   Features.push_back(predicted_ugf);
   Features.push_back(predicted_pm);
   Features.push_back(predicted_threedb);
+  Features.push_back(wirelength);
+  Features.push_back(Area);
 
   std::cout<<"deep learning cost "<<cost<<std::endl;
   return cost;  
@@ -2687,7 +2686,7 @@ double ConstGraph::Call_Machine_learning_model(std::string model_path,const char
   PyRun_SimpleString("from sklearn.metrics import mean_squared_error, r2_score");
   PyRun_SimpleString("import sys");
   PyRun_SimpleString("sys.path.append('./')");
-  PyRun_SimpleString("sys.path.append('/home/yaguang/Desktop/Research/Performance_Driven/branch/online_models/ALIGN-public-svm-5t/PlaceRouteHierFlow/placer')");
+  PyRun_SimpleString("sys.path.append('/home/yaguang/Desktop/Research/Performance_Driven/branch/Random_Generation/ALIGN-public-5t/PlaceRouteHierFlow/placer')");
   std::cout<<"other machin learning model step 3"<<std::endl;
   pModule = PyImport_ImportModule(module_name);
   std::cout<<"pModule "<<pModule<<std::endl;
