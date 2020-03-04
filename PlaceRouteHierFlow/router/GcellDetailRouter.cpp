@@ -3070,12 +3070,97 @@ ConvertToViaPnRDB_Placed_Origin(temp_via, Blocks[net.connected[i].iter2].pins[ne
   std::cout<<"END NetToNodeBlockPins"<<std::endl;
 };
 
+void GcellDetailRouter::Cal_Post_Wire_Length(){
+
+  int sum = 0;
+
+  for(int i=0;i<Nets.size();i++){
+
+     for(int j=0;j<Nets[i].path_metal.size();j++){
+
+        sum = sum + abs(Nets[i].path_metal[j].LinePoint[0].x-Nets[i].path_metal[j].LinePoint[1].x) + abs(Nets[i].path_metal[j].LinePoint[0].y-Nets[i].path_metal[j].LinePoint[1].y);
+      
+     }
+
+  }
+
+  std::cout<<"Post Wire Length is "<<(double) sum/2000<<std::endl;
+  //std::cout<<"Post Wire Length + 0.5 pin is "<<sum/2000<<std::endl;
+  //std::cout<<"Post Wire Length + pin is "<<sum/2000<<std::endl;
+
+
+  sum = 0;
+
+  for(int i=0;i<Nets.size();i++){
+
+     for(int j=0;j<Nets[i].path_metal.size();j++){
+
+        sum = sum + abs(Nets[i].path_metal[j].LinePoint[0].x-Nets[i].path_metal[j].LinePoint[1].x) + abs(Nets[i].path_metal[j].LinePoint[0].y-Nets[i].path_metal[j].LinePoint[1].y);
+      
+     }
+
+     for(int j=0;j<Nets[i].connected.size();j++){
+
+        if(Nets[i].connected[j].iter==RouterDB::BLOCK){
+        
+        //std::cout<<Nets[i].connected[j].iter<<" "<<Nets[i].connected[j].iter2<<" "<<Blocks[Nets[i].connected[j].iter].pins[Nets[i].connected[j].iter2].pinContacts.size()<<std::endl;
+
+        if(Blocks[Nets[i].connected[j].iter].pins[Nets[i].connected[j].iter2].pinContacts.size()!=1){
+          continue;
+        }
+
+        sum = sum + (Blocks[Nets[i].connected[j].iter].pins[Nets[i].connected[j].iter2].pinContacts[0].placedUR.x-Blocks[Nets[i].connected[j].iter].pins[Nets[i].connected[j].iter2].pinContacts[0].placedLL.x)/2+(Blocks[Nets[i].connected[j].iter].pins[Nets[i].connected[j].iter2].pinContacts[0].placedUR.y-Blocks[Nets[i].connected[j].iter].pins[Nets[i].connected[j].iter2].pinContacts[0].placedLL.y)/2;
+ 
+        }
+
+     }
+
+  }
+
+
+  std::cout<<"Post Wire Length + 0.5 pin is "<<(double) sum/2000<<std::endl;
+
+  sum = 0;
+
+  for(int i=0;i<Nets.size();i++){
+
+     for(int j=0;j<Nets[i].path_metal.size();j++){
+
+        sum = sum + abs(Nets[i].path_metal[j].LinePoint[0].x-Nets[i].path_metal[j].LinePoint[1].x) + abs(Nets[i].path_metal[j].LinePoint[0].y-Nets[i].path_metal[j].LinePoint[1].y);
+      
+     }
+
+     for(int j=0;j<Nets[i].connected.size();j++){
+
+        if(Nets[i].connected[j].iter==RouterDB::BLOCK){
+        
+        if(Blocks[Nets[i].connected[j].iter].pins[Nets[i].connected[j].iter2].pinContacts.size()!=1){
+          continue;
+        }
+
+        sum = sum + (Blocks[Nets[i].connected[j].iter].pins[Nets[i].connected[j].iter2].pinContacts[0].placedUR.x-Blocks[Nets[i].connected[j].iter].pins[Nets[i].connected[j].iter2].pinContacts[0].placedLL.x)+(Blocks[Nets[i].connected[j].iter].pins[Nets[i].connected[j].iter2].pinContacts[0].placedUR.y-Blocks[Nets[i].connected[j].iter].pins[Nets[i].connected[j].iter2].pinContacts[0].placedLL.y);
+ 
+        }
+
+     }
+
+  }
+
+  std::cout<<"Post Wire Length + pin is "<<(double) sum/2000<<std::endl;
+  
+
+
+};
+
 
 void GcellDetailRouter::ReturnHierNode(PnRDB::hierNode& HierNode)
 {
   HierNode.blockPins.clear();
   HierNode.interMetals.clear();
   HierNode.interVias.clear();
+
+
+  Cal_Post_Wire_Length();
 
   for(unsigned int i=0;i<HierNode.Terminals.size();i++){
       HierNode.Terminals[i].termContacts.clear();
