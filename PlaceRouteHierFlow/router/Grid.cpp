@@ -879,9 +879,9 @@ Grid::Grid(PnRDB::Drc_info& drc_info, RouterDB::point ll, RouterDB::point ur, in
     }
   }
   // 4. Create grid points
-  bool Power = false;
   RouterDB::point tmpp; // improve runtime of up/down edges - [wbxu: 20190505]
   for(int i=this->lowest_metal; i<=this->highest_metal; i++) {
+    bool Power = true;
     std::cout<<"Create grid on layer "<<i<<std::endl;
     this->Start_index_metal_vertices.at(i)=this->vertices_total.size();
     if(drc_info.Metal_info.at(i).direct==0) { // if vertical layer

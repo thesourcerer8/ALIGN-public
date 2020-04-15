@@ -62,11 +62,11 @@ static void route_single_variant( PnRdatabase& DB, const PnRDB::Drc_info& drcInf
   Router curr_route;
 
   bool NEW_GLOBAL_ROUTER = 1;
-  int h_skip_factor = 5;
+  int h_skip_factor = 7;
   int v_skip_factor = 5;
 
   int signal_routing_metal_l = 0;
-  int signal_routing_metal_u = 5;
+  int signal_routing_metal_u = 2;
 
   if ( NEW_GLOBAL_ROUTER) {
     // Gcell Global Routing
@@ -132,10 +132,10 @@ static void route_single_variant( PnRdatabase& DB, const PnRDB::Drc_info& drcInf
     }
 */
 
-    int power_grid_metal_l = 5;
-    int power_grid_metal_u = 6;
+    int power_grid_metal_l = 3;
+    int power_grid_metal_u = 4;
     int power_routing_metal_l = 0;
-    int power_routing_metal_u = 6;
+    int power_routing_metal_u = 4;
 
     curr_route.RouteWork(2, current_node, const_cast<PnRDB::Drc_info&>(drcInfo), power_grid_metal_l, power_grid_metal_u, binary_directory, h_skip_factor, v_skip_factor);
 

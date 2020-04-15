@@ -417,7 +417,7 @@ void PowerRouter::PowerNetRouter(PnRDB::hierNode& node, PnRDB::Drc_info& drc_inf
             A_star a_star(grid, 0); // no sheilding
             int multi_number = 0;
 
-            bool pathMark = a_star.FindFeasiblePath(grid, this->path_number, multi_number, multi_number);
+            bool pathMark = a_star.FindFeasiblePath(grid, this->path_number, multi_number, 0);
             std::vector<std::vector<RouterDB::Metal>> physical_path;
             std::cout<<"power routing pathMark "<<pathMark<<std::endl;
               if (pathMark) {

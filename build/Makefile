@@ -15,7 +15,7 @@ VENV=/opt/venv
 EXAMPLES=${ALIGN_HOME}/examples
 
 DESIGN=telescopic_ota
-PDK_DIR=pdks/FinFET14nm_Mock_PDK
+PDK_DIR=pdks/intel_p1222p2
 PDK_FILE=layers.json
 FLAT=0
 
@@ -33,7 +33,7 @@ endif
 
 # Convert schematic to gds & PNG
 ${OUTPUT_DIR}/${DESIGN}_0.png:	${EXAMPLES}/${DESIGN}/${DESIGN}.sp  ${DESIGN}
-	$(call execute,align-service, /bin/bash -c "source ${VENV}/bin/activate && cd ${DESIGN} && python ${VENV}/bin/schematic2layout.py ${EXAMPLES}/${DESIGN} -f ${EXAMPLES}/${DESIGN}/${DESIGN}.sp -s ${DESIGN} -p ${ALIGN_HOME}/${PDK_DIR} -flat ${FLAT} -c -g")
+	$(call execute,align-service, /bin/bash -c "source ${VENV}/bin/activate && cd ${DESIGN} && python ${VENV}/bin/schematic2layout.py ${EXAMPLES}/${DESIGN} -f ${EXAMPLES}/${DESIGN}/${DESIGN}.sp -s ${DESIGN} -p ${ALIGN_HOME}/${PDK_DIR} -flat ${FLAT} -c -g -l DEBUG -U_mos 2")
 
 ${DESIGN}:
 	mkdir ${DESIGN}
