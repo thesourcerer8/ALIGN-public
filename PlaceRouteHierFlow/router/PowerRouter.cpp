@@ -415,7 +415,7 @@ void PowerRouter::PowerNetRouter(PnRDB::hierNode& node, PnRDB::Drc_info& drc_inf
             AddViaEnclosure(Pset_via, grid, Set_x_contact, Set_net_contact);
             AddViaSpacing(Pset_via, grid);
             A_star a_star(grid, 0); // no sheilding
-            int multi_number = 0;
+            int multi_number = 1;
 
             bool pathMark = a_star.FindFeasiblePath(grid, this->path_number, multi_number, 0);
             std::vector<std::vector<RouterDB::Metal>> physical_path;
