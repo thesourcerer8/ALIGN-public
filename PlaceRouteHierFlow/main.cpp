@@ -304,7 +304,7 @@ int main(int argc, char** argv ){
 
 
   if ( !skip_saving_state) {
-    queue<int> Q=DB.TraverseHierTree(); // traverse hierarchical tree in topological order
+    deque<int> Q=DB.TraverseHierTree(); // traverse hierarchical tree in topological order
     json jsonStrAry = json::array();
     std::ofstream jsonStream;
     jsonStream.open( opath + "__hierTree.json");
@@ -316,7 +316,7 @@ int main(int argc, char** argv ){
     jsonStream.close();
   }
 
-  queue<int> Q = DB.TraverseHierTree();  // traverse hierarchical tree in topological order
+  deque<int> Q = DB.TraverseHierTree();  // traverse hierarchical tree in topological order
   std::vector<int> TraverseOrder;        // save traverse order, same as Q
   int Q_size = Q.size();
   for (int i = 0; i < Q_size; i++) {  // copy Q to TraverseOrder
