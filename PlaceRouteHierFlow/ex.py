@@ -1,4 +1,4 @@
-from PnRDB.PnRdatabase import *
+from PnR import *
 
 DB = PnRdatabase( "./testcase_example", "switched_capacitor_filter", "switched_capacitor_filter.v", "switched_capacitor_filter.lef", "switched_capacitor_filter.map", "layers.json")
 

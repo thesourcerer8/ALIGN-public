@@ -27,7 +27,7 @@ placer_path=placer
 router_path=router
 MNA_path=MNA
 
-OBJS=main.o
+OBJS=main.o toplevel.o
 SRCS=$(OBJS:.o=.cpp)
 LIBS=$(placer_path)/placer.a $(router_path)/router.a $(cap_placer_path)/cap_placer.a $(PnRDB_path)/PnRDB.a $(MNA_path)/MNA.a
 

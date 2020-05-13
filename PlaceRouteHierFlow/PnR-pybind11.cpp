@@ -4,22 +4,20 @@
 namespace py = pybind11;
 using namespace pybind11::literals;
 
-#include "PnRdatabase.h"
+#include "PnRDB/PnRdatabase.h"
 
 using namespace PnRDB;
 using std::string;
 
-PYBIND11_MODULE(PnRdatabase, m) {
-  m.doc() = "pybind11 plugin for PnRdatabase";
+PYBIND11_MODULE(PnR, m) {
+  m.doc() = "pybind11 plugin for PnR";
 
   py::class_<point>( m, "point")
     .def( py::init<>())
     .def( py::init<int, int>())
     .def_readwrite("x", &point::x)
     .def_readwrite("y", &point::y);
-
   py::class_<bbox>( m, "bbox")
-
     .def( py::init<>())
     .def( py::init<int, int, int, int>())
     .def( py::init<const bbox&>())
@@ -295,5 +293,12 @@ PYBIND11_MODULE(PnRdatabase, m) {
     .def( "WriteDBJSON", &PnRdatabase::WriteDBJSON)
     .def( "getDrc_info", &PnRdatabase::getDrc_info)
     .def( "checkoutSingleLEF", &PnRdatabase::checkoutSingleLEF)
+    .def( "AddingPowerPins", &PnRdatabase::AddingPowerPins)
   ;
+
+  /*
+  py::class_<Placer_Router_Cap>( m, "Placer_Router_Cap")
+    .def( py::init<string, string, hierNode&, Drc_info&, map<string, lefMacro>&, bool, int>());    
+  */
+
 };
