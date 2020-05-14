@@ -102,7 +102,7 @@ static void generic_placer_router_cap_test( const string& topcell)
   EXPECT_EQ( current_node.name, topcell);
 
   DB.AddingPowerPins(current_node);
-  Placer_Router_Cap PRC(opath, fpath, current_node, drcInfo, lefData, 1, 6); //dummy, aspect ratio, number of aspect retio
+  cap_placer::Placer_Router_Cap PRC(opath, fpath, current_node, drcInfo, lefData, 1, 6); //dummy, aspect ratio, number of aspect retio
 
   DB.WriteDBJSON( current_node, "cand/" + topcell + ".post_prc" + ".db.json");
 

@@ -5,6 +5,9 @@ namespace py = pybind11;
 using namespace pybind11::literals;
 
 #include "PnRDB/PnRdatabase.h"
+#include "cap_placer/capplacer.h"
+#include "placer/Placer.h"
+#include "main.h"
 
 using namespace PnRDB;
 using std::string;
@@ -294,11 +297,20 @@ PYBIND11_MODULE(PnR, m) {
     .def( "getDrc_info", &PnRdatabase::getDrc_info)
     .def( "checkoutSingleLEF", &PnRdatabase::checkoutSingleLEF)
     .def( "AddingPowerPins", &PnRdatabase::AddingPowerPins)
+    .def( "Extract_RemovePowerPins", &PnRdatabase::Extract_RemovePowerPins)
+    .def( "CheckinHierNode", &PnRdatabase::CheckinHierNode)
   ;
 
-  /*
-  py::class_<Placer_Router_Cap>( m, "Placer_Router_Cap")
+  py::class_<cap_placer::Placer_Router_Cap>( m, "Placer_Router_Cap")
     .def( py::init<string, string, hierNode&, Drc_info&, map<string, lefMacro>&, bool, int>());    
-  */
+
+  py::class_<Placer>( m, "Placer")
+    .def( py::init<hierNode&, string, int, Drc_info&>())
+    .def( py::init<std::vector<hierNode>&, string, int, Drc_info&>());
+
+  m.def("save_state", &save_state, "helper function to save_state");
+  m.def("route_single_variant", &route_single_variant, "helper function to route a single variant");
+  m.def("route_top_down", &route_top_down, "helper function to perform top-down routing");
+  m.def("toplevel", &toplevel, "helper function to perform the whole C++ flow");
 
 };

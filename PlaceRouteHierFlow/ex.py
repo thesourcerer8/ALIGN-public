@@ -10,3 +10,4 @@ for i in topo_order:
     print( i, hN.name)
     DB.PrintHierNode( hN)
     DB.WriteDBJSON( hN, f"__json_{hN.name}")
+    save_state( DB, hN, 0, "./testcase_example", "__tag", "__ltag", False)

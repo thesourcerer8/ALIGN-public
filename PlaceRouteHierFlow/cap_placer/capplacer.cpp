@@ -8,6 +8,7 @@
 
 using namespace std;
 using namespace nlohmann;
+using namespace cap_placer;
 
 ostream & operator<< (ostream& os, const PnRDB::point& p) {
     os << "(" << p.x << ", " << p.y << ")";

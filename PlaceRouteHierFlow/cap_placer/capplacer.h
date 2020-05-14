@@ -38,6 +38,8 @@ using std::endl;
 using std::cout;
 using std::cerr;
 
+namespace cap_placer {
+
 struct point {
   int x=0;
   int y=0;
@@ -179,6 +181,8 @@ class Placer_Router_Cap
     
     void WriteLef(const PnRDB::block &temp_block, const string& file, const string& opath);
     void check_grid( const net& n) const;
+};
+
 };
 
 #endif
