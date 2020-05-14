@@ -7,7 +7,7 @@ using namespace pybind11::literals;
 #include "PnRDB/PnRdatabase.h"
 #include "cap_placer/capplacer.h"
 #include "placer/Placer.h"
-#include "main.h"
+#include "toplevel.h"
 
 using namespace PnRDB;
 using std::string;

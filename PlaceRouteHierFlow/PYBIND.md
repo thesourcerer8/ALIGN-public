@@ -1,8 +1,8 @@
 ## pybind11 Experiment
 
-Compile PnRdatabase module using:
+Compile PnR module using:
 ```bash
-g++ -I ../json/include -O3 -Wall -shared -std=c++11 -fPIC `python -m pybind11 --includes` PnR-pybind11.cpp -o PnR`python3-config --extension-suffix` PnRDB/PnRDB.a ../../googletest/googletest/mybuild/libgtest.so
+g++ -I ../json/include -O3 -Wall -shared -std=c++11 -fPIC `python -m pybind11 --includes` PnR-pybind11.cpp -o PnR`python3-config --extension-suffix` toplevel.o cap_placer/cap_placer.a placer/placer.a router/router.a PnRDB/PnRDB.a ../../googletest/googletest/mybuild/libgtest.so
 ```
 
 First you need to recompile googletest using shared libraries:
