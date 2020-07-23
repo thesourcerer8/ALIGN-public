@@ -1,11 +1,13 @@
 .SUBCKT pcell_0 b d g s
-Mi1[0] n0 g s b phplvt nfin=6 m=1
-Mi0[0] d g n0 b phplvt nfin=6 m=1
+.PARAMS m=1
+Mi1[0] n0 g s b phplvt nfin=6 m=m
+Mi0[0] d g n0 b phplvt nfin=6 m=m
 .ENDS
 
 .SUBCKT pcell_1 d g s vssx
-Mi1[0] d g n0 vssx nhplvt nfin=6 m=1
-Mi0[0] n0 g s vssx nhplvt nfin=6 m=1
+.PARAMS m=1
+Mi1[0] d g n0 vssx nhplvt nfin=6 m=m
+Mi0[0] n0 g s vssx nhplvt nfin=6 m=m
 .ENDS
 
 .SUBCKT ldo_error_amp_v2 vbias vcc vin vip vout vssx
@@ -18,5 +20,4 @@ Xi28 n2 vin vcom vssx pcell_1 m=16
 Xi43 n4 n4 vssx vssx pcell_1 m=16
 Xi34 vout n4 vssx vssx pcell_1 m=16
 Xi30 vcom vbias vssx vssx pcell_1 m=16
-Xi31 vbias vssx vssx vssx pcell_1 m=4
 .ENDS
